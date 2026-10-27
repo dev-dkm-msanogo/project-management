@@ -1,0 +1,48 @@
+/* Reset léger + base. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+/* Montserrat (substitut de Gotham) est plus large que les polices système : 15 px de base gardent
+   la densité des tableaux, en respectant la taille choisie dans le navigateur. */
+html {
+  font-size: 93.75%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#root {
+  min-height: 100%;
+}
+
+svg {
+  display: block;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}

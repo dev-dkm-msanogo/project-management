@@ -1,0 +1,73 @@
+/* Jetons de design — charte graphique Dakar Mobilité (août 2023).
+   Couleurs principales : vert P 140-7 C, jaune P 7-8 C, gris P 179-14 C.
+   Typographie : Gotham si elle est installée, sinon Montserrat (embarquée, la plus proche). */
+@import '@fontsource-variable/montserrat';
+
+:root {
+  /* Encre : gris de la charte (titres, texte, aplats sombres) */
+  --ink-900: #3f3f3e;
+  --ink-800: #4a4a49;
+  --ink-700: #5a5a59;
+
+  /* Marque : vert de la charte et ses dérivés (actions, liens, sélection) */
+  --brand-700: #006b3b;
+  --brand-600: #00884b;
+  --brand-500: #22955e;
+  --brand-100: #c8e0cc;
+  --brand-050: #e8f3ec;
+
+  /* Accent : jaune de la charte (décor, jamais pour du texte sur fond clair) */
+  --accent: #ffcf00;
+  --accent-100: #fcf3dd;
+  --accent-050: #fff9e8;
+
+  /* Information : bleus complémentaires de la charte */
+  --info: #0087cb;
+  --info-text: #135585;
+  --info-050: #e6eef5;
+
+  /* Statuts RAG (texte : variante foncée lisible sur le fond clair du statut ;
+     sur l'aplat jaune ou orangé, le texte est en encre, ailleurs en blanc) */
+  --rag-green: #00884b;
+  --rag-green-050: #e8f3ec;
+  --rag-green-text: #006b3b;
+  --rag-amber: #ffcf00;
+  --rag-amber-050: #fcf3dd;
+  --rag-amber-text: #765a00;
+  --rag-orange: #e3a47a;
+  --rag-orange-050: #fbeadd;
+  --rag-orange-text: #8f3a12;
+  --rag-red: #c64d27;
+  --rag-red-050: #fbe9e2;
+  --rag-red-text: #aa3614;
+  --rag-grey: #b2b2b1;
+  --rag-grey-050: #f0f0ef;
+  --rag-grey-text: #5e5e5d;
+
+  /* Séries des graphiques (palette validée : contraste et daltonismes) */
+  --series-blue: #0087cb;
+  --series-orange: #cf7a3a;
+  --series-navy: #135585;
+
+  /* Surfaces & texte */
+  --bg: #f5f5f4;
+  --surface: #ffffff;
+  --surface-alt: #f7f7f6;
+  --track: #eaeaea;
+  --border: #e6e6e5;
+  --text: #3f3f3e;
+  --text-muted: #6b6b6a;
+
+  /* Typographie */
+  --font-sans: 'Gotham', 'Montserrat Variable', 'Montserrat', 'Segoe UI', system-ui, -apple-system, Arial,
+    sans-serif;
+
+  /* Rayons & ombres */
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow-color: 40, 40, 38;
+  --shadow-card: 0 1px 2px rgba(var(--shadow-color), 0.06), 0 2px 8px rgba(var(--shadow-color), 0.05);
+
+  /* Espacement de base */
+  --gap: 16px;
+}

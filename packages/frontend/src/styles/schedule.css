@@ -1,0 +1,351 @@
+/* ---------------------------------------------------------------------------
+   Modèle d'ordonnancement (activités, réseau, jalons, calendrier, référence)
+   et dictionnaire de la WBS.
+--------------------------------------------------------------------------- */
+
+.register-table--activities {
+  min-width: 1120px;
+}
+
+.register-table--estimates,
+.register-table--worksheet,
+.register-table--network {
+  min-width: 820px;
+}
+
+.register-table td.register-table__code,
+.schedule-wbs__code {
+  white-space: nowrap;
+}
+
+.schedule-row--critical td:first-child {
+  box-shadow: inset 3px 0 0 var(--rag-red);
+}
+
+.schedule-name {
+  display: block;
+  font-weight: 600;
+  color: var(--ink-900);
+}
+
+.schedule-description {
+  display: block;
+  margin-top: 3px;
+  color: var(--text-muted);
+}
+
+.schedule-wbs {
+  display: inline-flex;
+  gap: 6px;
+  align-items: baseline;
+}
+
+.schedule-wbs__code {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--brand-600);
+}
+
+.schedule-gap {
+  color: var(--rag-amber-text);
+  font-weight: 600;
+}
+
+.schedule-formula {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-800);
+  white-space: nowrap;
+}
+
+.schedule-estimate {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  align-items: center;
+  margin: 0;
+  font-size: 0.86rem;
+  color: var(--ink-800);
+}
+
+.schedule-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* --- Attributs des activités --- */
+.activity-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: var(--gap);
+}
+
+.activity-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.activity-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.activity-card__title {
+  flex: 1;
+  margin: 0;
+  font-size: 0.98rem;
+  color: var(--ink-900);
+}
+
+.activity-card__facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 14px;
+  margin: 0;
+  font-size: 0.84rem;
+}
+
+.activity-card__facts > div {
+  display: contents;
+}
+
+.activity-card__facts dt {
+  color: var(--text-muted);
+}
+
+.activity-card__facts dd {
+  margin: 0;
+  color: var(--ink-900);
+}
+
+/* --- Dictionnaire de la WBS --- */
+.wbs-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.wbs-entry .doc-facts,
+.wbs-entry .doc-text,
+.wbs-entry .doc-refs {
+  margin: 0;
+}
+
+/* --- Réseau du projet --- */
+.network-scroll {
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.network-diagram {
+  display: block;
+  font-family: var(--font-sans);
+}
+
+.network-node rect {
+  fill: var(--surface);
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+
+.network-node--critical rect {
+  fill: var(--rag-red-050);
+  stroke: var(--rag-red);
+}
+
+.network-node__code {
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--ink-900);
+}
+
+.network-node__duration,
+.network-node__dates,
+.network-node__float {
+  font-size: 11px;
+  fill: var(--text-muted);
+}
+
+.network-node__name {
+  font-size: 11.5px;
+  fill: var(--ink-900);
+}
+
+.network-node--critical .network-node__float {
+  fill: var(--rag-red);
+  font-weight: 600;
+}
+
+.network-edge {
+  fill: none;
+  stroke: var(--ink-700);
+  stroke-opacity: 0.45;
+  stroke-width: 1.4;
+}
+
+.network-edge--critical {
+  stroke: var(--rag-red);
+  stroke-opacity: 1;
+  stroke-width: 2;
+}
+
+.network-arrow {
+  fill: var(--ink-700);
+  fill-opacity: 0.6;
+}
+
+.network-arrow--critical {
+  fill: var(--rag-red);
+  fill-opacity: 1;
+}
+
+.network-edge__label {
+  font-size: 10.5px;
+  font-weight: 600;
+  fill: var(--brand-600);
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 3px;
+}
+
+.network-legend {
+  display: flex;
+  gap: 14px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.network-legend__item::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
+  vertical-align: -2px;
+  border: 1.5px solid var(--border);
+  border-radius: 3px;
+  background: var(--surface);
+}
+
+.network-legend__item--critical::before {
+  border-color: var(--rag-red);
+  background: var(--rag-red-050);
+}
+
+.network-path {
+  margin: 10px 0 0;
+  font-size: 0.86rem;
+  color: var(--ink-800);
+}
+
+/* --- Jalons --- */
+.milestone-track {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.milestone-track__item {
+  display: grid;
+  grid-template-columns: 124px 1fr;
+  gap: 14px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+}
+
+.milestone-track__item:first-child {
+  border-top: none;
+}
+
+.milestone-track__date {
+  position: relative;
+  padding-left: 18px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--ink-900);
+}
+
+.milestone-track__date::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 4px;
+  width: 9px;
+  height: 9px;
+  transform: rotate(45deg);
+  background: var(--brand-600);
+}
+
+.milestone-track__item--phase_gate .milestone-track__date::before {
+  background: var(--surface);
+  border: 2px solid var(--brand-600);
+  width: 7px;
+  height: 7px;
+}
+
+.milestone-track__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.88rem;
+}
+
+.milestone-track__head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  color: var(--ink-900);
+}
+
+.milestone-track__text {
+  color: var(--text-muted);
+}
+
+/* --- Calendrier --- */
+.weekday-strip {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.weekday-strip__day {
+  padding: 8px 0;
+  border-radius: var(--radius-sm);
+  background: var(--rag-grey-050);
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.weekday-strip__day--working {
+  background: var(--brand-050);
+  color: var(--brand-700);
+  font-weight: 600;
+}
+
+.editor-grid--holiday {
+  grid-template-columns: 180px 1fr;
+}
+
+@media (max-width: 640px) {
+  .editor-grid--holiday,
+  .milestone-track__item {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-cards {
+    grid-template-columns: 1fr;
+  }
+}

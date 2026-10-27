@@ -1,0 +1,360 @@
+/* ---------------------------------------------------------------------------
+   Layout applicatif : menu latéral + zone de contenu (barre supérieure + corps).
+--------------------------------------------------------------------------- */
+
+.layout {
+  display: flex;
+  align-items: stretch;
+  min-height: 100vh;
+}
+
+/* --- Menu latéral --- */
+.sidebar {
+  flex: none;
+  width: 272px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 12px 12px;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
+}
+
+.sidebar__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 8px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Logo couleur sur fond blanc, zone de protection respectée par les marges. */
+.sidebar__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.sidebar__brand-logo {
+  height: 38px;
+  width: auto;
+}
+
+.sidebar__brand-app {
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+/* Bouton d'ouverture du menu : visible uniquement sur petit écran. */
+.sidebar__toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-900);
+  cursor: pointer;
+}
+
+/* Position relative : les libellés masqués (position absolue) restent dans la zone de défilement
+   au lieu d'allonger la page. */
+.sidebar__nav {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 6px 2px 8px 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rag-grey) transparent;
+}
+
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-group__title {
+  font-size: 0.64rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  padding: 4px 10px 4px;
+}
+
+/* --- Groupes de processus --- */
+.nav-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.nav-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-section__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-900);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.nav-section__head:hover {
+  background: var(--surface-alt);
+}
+
+.nav-section__badge {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: var(--section-color);
+  color: var(--section-ink, #fff);
+  font-size: 0.7rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-section__title {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Nombre de processus du groupe. */
+.nav-section__count {
+  flex: none;
+  min-width: 22px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--rag-grey-050);
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.nav-section__chevron {
+  display: flex;
+  color: var(--text-muted);
+  transition: transform 0.15s ease;
+}
+
+.nav-section__chevron.is-collapsed {
+  transform: rotate(-90deg);
+}
+
+.nav-section__items {
+  list-style: none;
+  margin: 2px 0 2px 19px;
+  padding: 0 0 0 6px;
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* --- Éléments de navigation --- */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  color: var(--ink-800);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1.25;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav-item:hover {
+  background: var(--brand-050);
+  color: var(--brand-700);
+}
+
+/* Élément actif : vert de la charte, filet jaune à gauche (les deux couleurs du logo). */
+.nav-item--active,
+.nav-item--active:hover {
+  background: var(--brand-600);
+  color: #fff;
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.nav-item__icon {
+  display: flex;
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+.nav-item__label {
+  flex: 1;
+  min-width: 0;
+}
+
+/* --- Outputs dans un groupe : lignes plus compactes --- */
+.nav-section__items .nav-item {
+  padding: 7px 8px;
+  font-size: 0.83rem;
+}
+
+/* Output pas encore outillé : visible pour la feuille de route, non cliquable. */
+.nav-item--planned,
+.nav-item--planned:hover {
+  background: transparent;
+  color: var(--rag-grey);
+  cursor: default;
+  font-weight: 500;
+}
+
+/* Légende des modules à venir, en pied de menu. */
+.nav-legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+  padding: 10px 10px 2px;
+  border-top: 1px solid var(--border);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* Texte réservé aux lecteurs d'écran. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Zone de contenu --- */
+.content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.content__body {
+  padding: 24px;
+}
+
+/* --- Responsive : menu en tiroir sur mobile/tablette --- */
+@media (max-width: 900px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: sticky;
+    z-index: 20;
+    padding: 10px 12px;
+  }
+
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar__top {
+    padding: 0;
+    border-bottom: none;
+  }
+
+  .sidebar__brand {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .sidebar__brand-logo {
+    height: 30px;
+  }
+
+  .sidebar__toggle {
+    display: flex;
+  }
+
+  .sidebar__nav {
+    display: none;
+    max-height: 70vh;
+    padding-top: 12px;
+    margin-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+
+  .sidebar__nav--open {
+    display: flex;
+  }
+
+  .content__body {
+    padding: 16px;
+  }
+}
+
+/* En-tête de section avec indication (ex. page Gantt). */
+.plan__section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 12px;
+  margin-bottom: 12px;
+}
+
+.plan__section-head .plan__section-title {
+  margin-bottom: 0;
+}
+
+.plan__hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+}

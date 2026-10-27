@@ -1,0 +1,206 @@
+/* ---------------------------------------------------------------------------
+   Registre des parties prenantes : quadrants pouvoir / intérêt, matrice d'engagement.
+--------------------------------------------------------------------------- */
+
+/* --- Quadrants : variables de teinte (cases de la grille, badges) --- */
+.quadrant--manage {
+  --level-bg: var(--rag-red-050);
+  --level-strong: var(--rag-red);
+  --level-text: var(--rag-red-text);
+}
+.quadrant--satisfy {
+  --level-bg: var(--rag-amber-050);
+  --level-strong: var(--rag-amber);
+  --level-text: var(--rag-amber-text);
+}
+.quadrant--inform {
+  --level-bg: var(--info-050);
+  --level-strong: var(--info);
+  --level-text: var(--info-text);
+}
+.quadrant--monitor {
+  --level-bg: var(--rag-grey-050);
+  --level-strong: var(--rag-grey);
+  --level-text: var(--rag-grey-text);
+}
+
+.quadrant-badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--level-bg);
+  color: var(--level-text);
+  font-size: 0.74rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.register-table--stakeholders {
+  min-width: 860px;
+}
+
+/* --- Registre : filtres, lignes dépliables --- */
+.stakeholder-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.stakeholder-filters__search {
+  flex: 1 1 260px;
+  max-width: 420px;
+}
+
+.stakeholder-filters__quadrant {
+  flex: 0 1 260px;
+}
+
+.stakeholder-row {
+  cursor: pointer;
+}
+
+.stakeholder-row:hover td {
+  background: var(--surface-alt);
+}
+
+.stakeholder-row--open td {
+  border-bottom-color: transparent;
+}
+
+.stakeholder-row__toggle {
+  width: 32px;
+}
+
+.disclosure {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink-800);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.disclosure:hover {
+  background: var(--brand-050);
+  color: var(--brand-700);
+}
+
+.disclosure[aria-expanded='true'] {
+  transform: rotate(90deg);
+}
+
+.stakeholder-engagement {
+  white-space: nowrap;
+}
+
+.stakeholder-engagement .engagement-gap {
+  margin-left: 8px;
+}
+
+.stakeholder-details td {
+  background: var(--surface-alt);
+}
+
+.stakeholder-details__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 20px;
+  margin: 0;
+  padding: 4px 0 6px;
+  font-size: 0.84rem;
+}
+
+.stakeholder-details__grid dt {
+  margin-bottom: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+}
+
+.stakeholder-details__grid dd {
+  margin: 0;
+  line-height: 1.5;
+  color: var(--ink-900);
+  white-space: normal;
+}
+
+@media (max-width: 760px) {
+  .stakeholder-details__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.register-table__contact {
+  min-width: 150px;
+  overflow-wrap: anywhere;
+}
+
+/* --- Matrice d'évaluation de l'engagement --- */
+.engagement-matrix {
+  min-width: 640px;
+}
+
+.register-table thead th.engagement-matrix__level {
+  text-align: center;
+}
+
+.engagement-matrix__cell {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.engagement-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin: 0 2px;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.engagement-mark--current {
+  border: 2px solid var(--ink-700);
+  color: var(--ink-700);
+  background: var(--surface);
+}
+
+.engagement-mark--desired {
+  background: var(--brand-600);
+  color: #fff;
+}
+
+.engagement-gap {
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.engagement-gap--todo {
+  color: var(--rag-amber-text);
+}
+
+.engagement-gap--done {
+  color: var(--rag-green);
+}
+
+.engagement-matrix__legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 10px 0 0;
+  padding: 0 10px 10px;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}

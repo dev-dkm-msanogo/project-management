@@ -1,0 +1,481 @@
+/* ---------------------------------------------------------------------------
+   Pages « document » d'un projet (registres, charte) : conteneur, panneaux,
+   tuiles de synthèse et matrice 5 × 5 colorée.
+--------------------------------------------------------------------------- */
+
+/* --- Page --- */
+.doc-page {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.doc-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 20px;
+}
+
+/* --- Synthèse --- */
+.summary-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.summary-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+}
+
+.summary-tile__value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--ink-900);
+}
+
+.summary-tile__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.summary-tile--danger {
+  border-left-color: var(--rag-red);
+}
+.summary-tile--warning {
+  border-left-color: var(--rag-orange);
+}
+.summary-tile--success {
+  border-left-color: var(--rag-green);
+}
+.summary-tile--alert {
+  border-left-color: var(--rag-red);
+  background: var(--rag-red-050);
+}
+
+/* --- Matrice 5 × 5 (risques, parties prenantes) --- */
+.heat-matrix {
+  overflow-x: auto;
+}
+
+.heat-matrix__grid {
+  display: grid;
+  grid-template-columns: minmax(80px, 140px) repeat(5, minmax(56px, 1fr));
+  gap: 4px;
+}
+
+.heat-matrix__axis {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.heat-matrix__axis strong {
+  color: var(--ink-900);
+}
+
+.heat-matrix__axis--x {
+  justify-content: center;
+  text-align: center;
+  padding-top: 4px;
+}
+
+.heat-matrix__cell {
+  position: relative;
+  min-height: 64px;
+  padding: 6px;
+  border-radius: 6px;
+  background: var(--level-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heat-matrix__score {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: var(--level-text);
+  opacity: 0.7;
+}
+
+.heat-matrix__codes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
+.matrix-chip {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-900);
+  font-size: 0.7rem;
+  font-weight: 800;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(var(--shadow-color), 0.15);
+  cursor: default;
+}
+
+.matrix-chip--ring {
+  box-shadow: 0 0 0 2px var(--rag-green);
+}
+
+.heat-matrix__caption {
+  margin-top: 12px;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.heat-matrix__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-top: 8px;
+  font-size: 0.76rem;
+  color: var(--text);
+}
+
+.heat-matrix__legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.heat-matrix__swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: var(--level-bg);
+  border: 2px solid var(--level-strong);
+}
+
+@media (max-width: 900px) {
+  .heat-matrix__grid {
+    grid-template-columns: 90px repeat(5, minmax(48px, 1fr));
+  }
+
+  .heat-matrix__axis--y,
+  .heat-matrix__axis--x {
+    font-size: 0.66rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .doc-panel {
+    padding: 14px;
+  }
+
+  .heat-matrix__grid {
+    grid-template-columns: 60px repeat(5, minmax(42px, 1fr));
+    gap: 3px;
+  }
+
+  .heat-matrix__cell {
+    min-height: 52px;
+    padding: 4px;
+  }
+
+  .heat-matrix__axis {
+    min-width: 0;
+  }
+
+  .heat-matrix__axis--x {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .heat-matrix__axis-label {
+    font-size: 0.58rem;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+
+  .matrix-chip {
+    padding: 1px 4px;
+    font-size: 0.6rem;
+  }
+}
+
+.status-badge--red {
+  background: var(--rag-red-050);
+  color: var(--rag-red-text);
+}
+
+/* --- Éditeur d'une entrée de registre : étapes --- */
+.entry-form {
+  display: grid;
+  gap: 10px;
+}
+
+.entry-form__step {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 12px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.entry-form__step-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-800);
+}
+
+.entry-form__score {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: flex-end;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-900);
+}
+
+.entry-form__warning {
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--rag-amber-050);
+  color: var(--rag-amber-text);
+  font-size: 0.8rem;
+}
+
+/* Grilles adaptées à la largeur réelle du formulaire (et non de l'écran). */
+.editor-grid--code-title {
+  grid-template-columns: minmax(80px, 120px) minmax(0, 1fr);
+}
+
+.editor-grid--fluid {
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.editor-grid--narrow-wide {
+  grid-template-columns: minmax(150px, 1fr) minmax(0, 3fr);
+}
+
+.editor-grid--wide-narrow {
+  grid-template-columns: minmax(0, 3fr) minmax(150px, 1fr);
+}
+
+.editor-grid--objective {
+  grid-template-columns: minmax(140px, 1fr) minmax(0, 2fr) minmax(0, 2fr);
+}
+
+@media (max-width: 760px) {
+  .editor-grid--narrow-wide,
+  .editor-grid--wide-narrow,
+  .editor-grid--objective {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- Tableau de registre --- */
+.register-table {
+  font-size: 0.83rem;
+}
+
+.register-table thead th {
+  text-align: left;
+  padding: 9px 10px;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ink-800);
+  background: var(--surface-alt);
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+
+.register-table tbody td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--surface-alt);
+  vertical-align: top;
+}
+
+.register-table__code {
+  font-weight: 800;
+  color: var(--ink-900);
+  white-space: nowrap;
+}
+
+/* « Modifier » une entrée (éditeurs) : dernière colonne, au plus juste, toujours visible quand le
+   tableau défile horizontalement. */
+.register-table__edit {
+  position: sticky;
+  right: 0;
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
+  background: var(--surface);
+  box-shadow: -10px 0 10px -10px rgba(var(--shadow-color), 0.25);
+}
+
+.register-row--muted td.register-table__edit,
+.risk-row--closed td.register-table__edit {
+  opacity: 1;
+}
+
+.activity-card__head > .btn {
+  margin-left: auto;
+}
+
+.register-table__title {
+  min-width: 200px;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.register-table__title,
+.register-table__response {
+  display: table-cell;
+}
+
+.register-table__description {
+  display: block;
+  margin-top: 3px;
+  font-weight: 400;
+  font-size: 0.76rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.register-table__response {
+  min-width: 220px;
+}
+
+.register-table__muted {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.register-table__muted-cell {
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.register-table__scale {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.register-table__overdue {
+  color: var(--rag-red);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.register-table__overdue-flag {
+  display: block;
+  width: fit-content;
+  margin-top: 3px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--rag-red-050);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Ligne inactive (contrainte levée…). */
+.register-row--muted td {
+  opacity: 0.55;
+}
+
+/* Signal d'action requise, ex. « À transformer en risque ». */
+.register-flag {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--rag-red-050);
+  color: var(--rag-red);
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+/* Lien vers une entrée d'un autre registre (ex. risque lié). */
+.ref-link {
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--brand-700);
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.ref-link:hover {
+  background: var(--brand-050);
+  border-color: var(--brand-050);
+}
+
+.register-table--assumptions {
+  min-width: 1120px;
+}
+
+/* Texte secondaire dans une cellule (commentaires…). */
+.register-table__note {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.entry-form__hint {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+/* Personne saisie avant le référentiel des ressources : à rattacher. */
+.person-unlinked {
+  color: var(--rag-amber-text);
+}
+
+.person-unlinked__badge {
+  margin-left: 4px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--rag-amber-050);
+  font-size: 0.68rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.entry-form__ready {
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--rag-green-050);
+  color: var(--rag-green-text);
+  font-size: 0.8rem;
+}

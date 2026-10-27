@@ -1,0 +1,365 @@
+/* ---------------------------------------------------------------------------
+   Approvisionnements : plan de gestion, stratégie, sélection des fournisseurs.
+--------------------------------------------------------------------------- */
+
+/* --- Calendrier des activités d'achat --- */
+.procurement-timeline {
+  display: grid;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.procurement-timeline__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 14px;
+  padding: 8px 0 8px 18px;
+  font-size: 0.88rem;
+  color: var(--ink-800);
+}
+
+/* Fil chronologique : un point par activité, relié au suivant. */
+.procurement-timeline__item::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--brand-500);
+}
+
+.procurement-timeline__item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 24px;
+  bottom: -6px;
+  left: 3.5px;
+  width: 1px;
+  background: var(--border);
+}
+
+.procurement-timeline__date {
+  font-weight: 600;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* --- Fournisseurs présélectionnés --- */
+.seller-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.seller-list__item {
+  display: grid;
+  gap: 3px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.86rem;
+  color: var(--ink-800);
+}
+
+.seller-list__item span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* --- Types de contrat --- */
+.contract-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contract-card {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.contract-card__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink-900);
+}
+
+.contract-card__code {
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--ink-800);
+  color: #fff;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Qui porte le risque de coût : libellé + teinte (jamais la couleur seule). */
+.contract-risk {
+  justify-self: start;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.contract-risk--seller {
+  background: var(--brand-050);
+  color: var(--brand-700);
+}
+
+.contract-risk--shared {
+  background: var(--rag-amber-050);
+  color: var(--rag-amber-text);
+}
+
+.contract-risk--buyer {
+  background: var(--rag-red-050);
+  color: var(--rag-red-text);
+}
+
+.contract-risk--other {
+  background: var(--rag-grey-050);
+  color: var(--text-muted);
+}
+
+.contract-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+
+.contract-option {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.contract-option--selected {
+  border-color: var(--brand-500);
+  background: var(--brand-050);
+}
+
+/* --- Cycle d'achat --- */
+.register-table--lifecycle {
+  min-width: 820px;
+}
+
+.phase-step {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--brand-050);
+  color: var(--brand-700);
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+/* --- Sélection des fournisseurs --- */
+.selection-ranking {
+  display: grid;
+  gap: 8px;
+  margin: 4px 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.selection-ranking__row {
+  display: grid;
+  grid-template-columns: minmax(160px, 260px) minmax(0, 1fr) 90px;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.86rem;
+  color: var(--ink-800);
+}
+
+.selection-ranking__name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.selection-ranking__track {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.selection-ranking__bar {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--rag-grey);
+}
+
+.selection-ranking__row--leader .selection-ranking__bar {
+  background: var(--rag-green);
+}
+
+.selection-ranking__row--leader .selection-ranking__name {
+  font-weight: 700;
+}
+
+.selection-ranking__total {
+  text-align: right;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.selection-grid {
+  min-width: 640px;
+}
+
+.selection-grid .register-table__title .register-table__muted {
+  font-weight: 400;
+}
+
+.selection-grid__caption {
+  padding: 0 0 8px;
+  caption-side: top;
+  text-align: left;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.register-table th.selection-grid__leader {
+  color: var(--rag-green-text);
+}
+
+.rating {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 22px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+}
+
+.rating--1,
+.rating--2 {
+  background: var(--rag-red-050);
+  color: var(--rag-red-text);
+}
+
+.rating--3 {
+  background: var(--rag-amber-050);
+  color: var(--rag-amber-text);
+}
+
+.rating--4,
+.rating--5 {
+  background: var(--rag-green-050);
+  color: var(--rag-green-text);
+}
+
+/* Éditeur : candidats, critères et aperçu des totaux. */
+.candidate-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px 14px;
+}
+
+.candidate-list__row {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.candidate-list__row .field {
+  flex: 1;
+}
+
+/* Bouton de retrait aligné sur le champ, pas sur son libellé. */
+.candidate-list__row .btn--icon {
+  align-self: flex-end;
+  margin-bottom: 6px;
+}
+
+.candidate-list__add {
+  align-self: flex-start;
+}
+
+.criterion-form {
+  display: grid;
+  gap: 10px;
+}
+
+.rating-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 10px 14px;
+}
+
+.selection-preview {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-alt);
+}
+
+.selection-preview__weights {
+  margin: 0;
+  font-weight: 600;
+  color: var(--rag-green-text);
+}
+
+.selection-preview__weights--off {
+  color: var(--rag-amber-text);
+}
+
+.selection-preview__totals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.86rem;
+  color: var(--ink-800);
+}
+
+.selection-preview__best {
+  color: var(--rag-green-text);
+}
+
+@media (max-width: 640px) {
+  .procurement-timeline__item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+
+  .selection-ranking__row {
+    grid-template-columns: minmax(0, 1fr) 80px;
+  }
+
+  .selection-ranking__track {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}

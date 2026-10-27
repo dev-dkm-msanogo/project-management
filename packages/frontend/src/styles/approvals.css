@@ -1,0 +1,169 @@
+/* ---------------------------------------------------------------------------
+   Circuit de validation : bandeau des documents, historique, décisions, page « Validations ».
+--------------------------------------------------------------------------- */
+
+/* --- Bandeau de validation d'un document --- */
+.approval-bar {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--rag-grey);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+}
+
+.approval-bar--amber {
+  border-left-color: var(--accent);
+  background: var(--accent-050);
+}
+
+.approval-bar--green {
+  border-left-color: var(--brand-600);
+}
+
+.approval-bar__main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.approval-bar__version {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink-800);
+}
+
+.approval-bar__text {
+  flex: 1 1 320px;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.approval-bar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.approval-bar__rejection,
+.approval-bar__viewing {
+  margin-top: 10px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+}
+
+.approval-bar__rejection {
+  background: var(--rag-red-050);
+  color: var(--rag-red-text);
+}
+
+.approval-bar__viewing {
+  background: var(--info-050);
+  color: var(--info-text);
+}
+
+.approval-bar__missing {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--rag-amber-text);
+}
+
+/* --- Historique (repliable) --- */
+.approval-history {
+  margin-top: 10px;
+  font-size: 0.8rem;
+}
+
+.approval-history summary {
+  cursor: pointer;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.approval-history__list {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-left: 2px solid var(--border);
+}
+
+.approval-history__item {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  padding-left: 12px;
+}
+
+.approval-history__what {
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.approval-history__item--approved .approval-history__what {
+  color: var(--rag-green-text);
+}
+
+.approval-history__item--rejected .approval-history__what {
+  color: var(--rag-red-text);
+}
+
+.approval-history__who {
+  color: var(--text-muted);
+}
+
+.approval-history__comment {
+  flex-basis: 100%;
+  color: var(--text);
+  font-style: italic;
+}
+
+/* --- Décisions (demandes, attributions) --- */
+.decision-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 12px 0;
+  padding: 0;
+  border: none;
+}
+
+.decision-choices legend {
+  margin-bottom: 6px;
+}
+
+.decision-choices__option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+/* --- Page « Validations » --- */
+.approvers-choice {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.approval-circuit td {
+  vertical-align: top;
+}
+
+.approval-circuit th:first-child {
+  width: 50%;
+}
+
+/* Textes secondaires du tableau : ils passent à la ligne. */
+.approval-circuit__note {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}

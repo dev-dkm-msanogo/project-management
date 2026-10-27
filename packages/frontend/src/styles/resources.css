@@ -1,0 +1,244 @@
+/* ---------------------------------------------------------------------------
+   Ressources : besoins (RBS), plan de gestion des ressources (organigramme)
+   et charte de l'équipe (règles numérotées, signatures).
+--------------------------------------------------------------------------- */
+
+.register-table--resources {
+  min-width: 1040px;
+}
+
+.resource-quantity {
+  min-width: 180px;
+}
+
+.register-table--roles {
+  min-width: 760px;
+}
+
+.register-table--signatures {
+  min-width: 480px;
+}
+
+.resource-plan__pair {
+  margin-top: 16px;
+}
+
+/* --- Structure de découpage des ressources (RBS) --- */
+.rbs {
+  font-size: 0.86rem;
+}
+
+.rbs__root {
+  margin: 0 0 6px;
+  font-weight: 800;
+  color: var(--ink-900);
+}
+
+.rbs__children {
+  margin: 0;
+  padding: 0 0 0 18px;
+  list-style: none;
+  border-left: 1px solid var(--border);
+}
+
+.rbs__children--top {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.rbs__node {
+  margin: 2px 0;
+}
+
+.rbs__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.rbs__code {
+  min-width: 52px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.rbs__label {
+  color: var(--text);
+}
+
+.rbs__detail {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* Catégories (niveau 1) en bandeau, sous-ensembles (niveau 2) en gras. */
+.rbs__node--level-1 > .rbs__row {
+  margin-top: 8px;
+  background: var(--surface-alt);
+  font-weight: 800;
+}
+
+.rbs__node--level-1 > .rbs__row .rbs__label {
+  color: var(--ink-900);
+}
+
+.rbs__node--level-2 > .rbs__row .rbs__label {
+  font-weight: 700;
+  color: var(--ink-800);
+}
+
+/* --- Organigramme (connecteurs en CSS) --- */
+.org-chart {
+  --org-line: var(--rag-grey);
+  overflow-x: auto;
+  padding: 4px 0 8px;
+}
+
+.org-chart ul {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  padding: 20px 0 0;
+  list-style: none;
+}
+
+.org-chart > ul {
+  padding-top: 0;
+}
+
+.org-chart li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 5px 0;
+}
+
+/* Barre horizontale reliant les frères, puis descente vers chaque rôle. */
+.org-chart li::before,
+.org-chart li::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 50%;
+  width: 50%;
+  height: 20px;
+  border-top: 1px solid var(--org-line);
+}
+
+.org-chart li::after {
+  right: auto;
+  left: 50%;
+  border-left: 1px solid var(--org-line);
+}
+
+.org-chart li:only-child {
+  padding-top: 0;
+}
+
+.org-chart li:only-child::before,
+.org-chart li:only-child::after,
+.org-chart > ul > li::before,
+.org-chart > ul > li::after {
+  display: none;
+}
+
+.org-chart > ul > li {
+  padding-top: 0;
+}
+
+.org-chart li:first-child::before,
+.org-chart li:last-child::after {
+  border: 0 none;
+}
+
+.org-chart li:last-child::before {
+  border-right: 1px solid var(--org-line);
+  border-radius: 0 6px 0 0;
+}
+
+.org-chart li:first-child::after {
+  border-radius: 6px 0 0 0;
+}
+
+/* Descente depuis le rôle supérieur. */
+.org-chart ul ul::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 20px;
+  border-left: 1px solid var(--org-line);
+}
+
+.org-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 120px;
+  max-width: 170px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--brand-600);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+.org-card strong {
+  color: var(--ink-900);
+}
+
+.org-card span {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+/* --- Charte de l'équipe : règles numérotées --- */
+.charter-rules + .charter-rules {
+  margin-top: 8px;
+}
+
+.doc-numbered {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: rule;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.doc-numbered li {
+  position: relative;
+  padding: 8px 12px 8px 44px;
+  counter-increment: rule;
+}
+
+.doc-numbered li + li {
+  border-top: 1px solid var(--border);
+}
+
+.doc-numbered li::before {
+  content: counter(rule) '.';
+  position: absolute;
+  top: 8px;
+  left: 14px;
+  font-weight: 800;
+  color: var(--ink-800);
+}
+
+.doc-numbered strong,
+.doc-list strong {
+  color: var(--ink-900);
+}

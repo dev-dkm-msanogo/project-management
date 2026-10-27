@@ -1,0 +1,246 @@
+/* ---------------------------------------------------------------------------
+   Pages « document » (charte, business case, plan des bénéfices, RACI) :
+   en-tête, faits clés, textes, listes à puces, colonnes, état vide.
+--------------------------------------------------------------------------- */
+
+.doc-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 16px;
+}
+
+/* Méta et action d'un en-tête, groupées à droite. */
+.doc-heading__aside {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.doc-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--ink-900);
+}
+
+/* --- Faits clés --- */
+.doc-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 0 0 20px;
+}
+
+.doc-facts > div {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-alt);
+}
+
+.doc-facts dt {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.doc-facts dd {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 4px 0 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.doc-facts dd span {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.doc-text {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text);
+  white-space: pre-line;
+}
+
+.doc-subtitle {
+  margin: 14px 0 6px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-800);
+}
+
+.doc-subtitle:first-child {
+  margin-top: 0;
+}
+
+/* --- Deux colonnes sur grand écran --- */
+.doc-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+/* --- Listes à puces --- */
+.doc-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.88rem;
+}
+
+.doc-list li {
+  position: relative;
+  padding-left: 18px;
+  line-height: 1.45;
+}
+
+.doc-list li::before {
+  content: '';
+  position: absolute;
+  top: 0.55em;
+  left: 2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink-700);
+}
+
+.doc-list--in li::before {
+  background: var(--rag-green);
+}
+
+.doc-list--out li::before {
+  background: var(--rag-grey);
+}
+
+/* --- Panneaux : titre et provenance --- */
+.doc-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* --- Provenance d'une section (ex. « Issu des registres ») --- */
+.doc-sync {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--rag-green-050);
+  color: var(--rag-green);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+/* --- État vide --- */
+.empty-state {
+  text-align: center;
+  padding: 40px 24px;
+}
+
+.empty-state__title {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--ink-900);
+}
+
+.empty-state__text {
+  max-width: 56ch;
+  margin: 0 auto;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* --- Métadonnées, notes et valeurs --- */
+.doc-meta {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+.doc-note {
+  margin: 10px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.doc-positive {
+  color: var(--rag-green) !important;
+}
+
+/* --- Références tirées des registres (charte, énoncé du périmètre) --- */
+.doc-references {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin-top: 8px;
+}
+
+.doc-references > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.doc-refs {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.84rem;
+}
+
+.doc-refs li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--surface-alt);
+}
+
+.doc-refs li span:not(.status-badge) {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.doc-refs--two-columns {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  column-gap: 24px;
+  margin-bottom: 10px;
+}
+
+/* Bandeau d'état d'un document (transfert, approbation…). */
+.doc-status {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--rag-grey-050);
+  font-size: 0.86rem;
+  color: var(--ink-800);
+}
+
+.doc-status--done {
+  background: var(--rag-green-050);
+  color: var(--rag-green-text);
+}

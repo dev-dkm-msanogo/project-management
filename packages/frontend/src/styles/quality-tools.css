@@ -1,0 +1,387 @@
+/* ---------------------------------------------------------------------------
+   Outils qualité : métriques, rapport, affinités, causes et effets, logigrammes.
+--------------------------------------------------------------------------- */
+
+.register-table--metrics,
+.register-table--metric-status {
+  min-width: 860px;
+}
+
+.quality-item {
+  color: var(--ink-900);
+}
+
+.quality-target {
+  min-width: 110px;
+  font-weight: 600;
+  color: var(--brand-700);
+}
+
+.quality-mismatch {
+  color: var(--rag-red-text);
+  font-weight: 600;
+}
+
+/* --- Anomalies par sévérité --- */
+.severity-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 14px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.severity-bars__row {
+  display: grid;
+  grid-template-columns: 96px 1fr 32px;
+  gap: 10px;
+  align-items: center;
+  font-size: 0.84rem;
+  color: var(--ink-800);
+}
+
+.severity-bars__track {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.severity-bars__fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--rag-grey);
+}
+
+.severity-bars__row--1 .severity-bars__fill {
+  background: var(--rag-red);
+}
+
+.severity-bars__row--2 .severity-bars__fill {
+  background: var(--rag-amber);
+}
+
+.severity-bars__row--3 .severity-bars__fill {
+  background: var(--brand-500);
+}
+
+.severity-bars__value {
+  text-align: right;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-900);
+}
+
+.quality-recommendations {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--ink-800);
+}
+
+.quality-recommendations strong {
+  color: var(--ink-900);
+}
+
+/* --- Outils d'analyse --- */
+.analysis-question {
+  margin: 0 0 14px;
+  font-size: 0.88rem;
+  color: var(--ink-800);
+}
+
+.analysis-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.analysis-picker__item {
+  max-width: 340px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  font: inherit;
+  font-size: 0.82rem;
+  color: var(--ink-800);
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.analysis-picker__item--active {
+  border-color: var(--brand-500);
+  background: var(--brand-050);
+  color: var(--brand-700);
+}
+
+.affinity-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.affinity-group {
+  --tone: var(--brand-500);
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--tone);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.affinity-group--1 {
+  --tone: var(--rag-green);
+}
+
+.affinity-group--2 {
+  --tone: var(--rag-amber);
+}
+
+.affinity-group--3 {
+  --tone: var(--series-navy);
+}
+
+.affinity-group--4 {
+  --tone: var(--rag-red);
+}
+
+.affinity-group--5 {
+  --tone: var(--series-blue);
+}
+
+.affinity-group__theme {
+  margin: 0;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.92rem;
+  color: var(--ink-900);
+}
+
+.affinity-group__ideas {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 12px 14px;
+  list-style: none;
+}
+
+.affinity-group__ideas li {
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-alt);
+  font-size: 0.84rem;
+  color: var(--ink-800);
+}
+
+/* --- Arête de poisson --- */
+.fishbone,
+.flowchart {
+  display: block;
+  font-family: var(--font-sans);
+}
+
+.fishbone__spine {
+  stroke: var(--ink-800);
+  stroke-width: 3;
+}
+
+.fishbone__arrow,
+.flowchart__arrow {
+  fill: var(--ink-800);
+}
+
+.fishbone__effect {
+  fill: var(--rag-red-050);
+  stroke: var(--rag-red);
+  stroke-width: 1.5;
+}
+
+.fishbone__effect-text {
+  font-size: 12.5px;
+  font-weight: 700;
+  fill: var(--rag-red-text);
+}
+
+.fishbone__category {
+  --tone: var(--brand-500);
+}
+
+.fishbone__category--1 {
+  --tone: var(--rag-green);
+}
+
+.fishbone__category--2 {
+  --tone: var(--rag-amber);
+}
+
+.fishbone__category--3 {
+  --tone: var(--series-navy);
+}
+
+.fishbone__category--4 {
+  --tone: var(--series-blue);
+}
+
+.fishbone__category--5 {
+  --tone: var(--rag-red);
+}
+
+.fishbone__label-box {
+  fill: var(--surface);
+  stroke: var(--tone);
+  stroke-width: 1.5;
+}
+
+.fishbone__label {
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--ink-900);
+}
+
+.fishbone__bone {
+  stroke: var(--ink-700);
+  stroke-width: 1.8;
+}
+
+.fishbone__tick {
+  stroke: var(--ink-700);
+  stroke-opacity: 0.6;
+}
+
+.fishbone__cause {
+  font-size: 11px;
+  fill: var(--ink-800);
+}
+
+/* --- Logigramme --- */
+.flowchart__node rect,
+.flowchart__node polygon,
+.flowchart__node ellipse {
+  stroke-width: 1.5;
+}
+
+.flowchart__node--action rect {
+  fill: var(--brand-050);
+  stroke: var(--brand-500);
+}
+
+.flowchart__node--decision polygon {
+  fill: var(--rag-amber-050);
+  stroke: var(--rag-amber);
+}
+
+.flowchart__node--start ellipse,
+.flowchart__node--end ellipse {
+  fill: var(--rag-green-050);
+  stroke: var(--rag-green);
+}
+
+.flowchart__text {
+  font-size: 12px;
+  fill: var(--ink-900);
+}
+
+.flowchart__node--start .flowchart__text,
+.flowchart__node--end .flowchart__text,
+.flowchart__node--decision .flowchart__text {
+  font-weight: 700;
+}
+
+.flowchart__link {
+  fill: none;
+  stroke: var(--ink-800);
+  stroke-width: 1.5;
+}
+
+.flowchart__link--no {
+  stroke: var(--rag-red);
+  stroke-dasharray: 5 4;
+}
+
+.flowchart__yes,
+.flowchart__no {
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.flowchart__yes {
+  fill: var(--rag-green-text);
+}
+
+.flowchart__no {
+  fill: var(--rag-red-text);
+}
+
+/* --- Éditeur des logigrammes --- */
+.flow-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.flow-steps__item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-alt);
+}
+
+.flow-steps__item > .editor-grid {
+  grid-column: 1;
+}
+
+.flow-steps__actions {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: flex;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.btn--icon.flow-steps__move {
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--border);
+  color: var(--ink-800);
+}
+
+.btn--icon.flow-steps__move:hover:not(:disabled) {
+  background: var(--brand-050);
+  color: var(--brand-700);
+}
+
+.flow-step-grid {
+  grid-template-columns: 160px 1fr;
+}
+
+.flow-steps__add {
+  display: flex;
+  gap: 8px;
+}
+
+.cause-category {
+  padding: 8px 0;
+}
+
+@media (max-width: 640px) {
+  .flow-step-grid {
+    grid-template-columns: 1fr;
+  }
+}

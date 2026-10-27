@@ -1,0 +1,223 @@
+/* ---------------------------------------------------------------------------
+   Shell applicatif (barre supérieure + onglets) et fonctionnalité Plan de projet.
+--------------------------------------------------------------------------- */
+
+/* --- Badge de statut --- */
+.status-badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-badge--green {
+  background: var(--rag-green-050);
+  color: var(--rag-green);
+}
+.status-badge--blue {
+  background: var(--brand-050);
+  color: var(--brand-700);
+}
+.status-badge--amber {
+  background: var(--rag-amber-050);
+  color: var(--rag-amber-text);
+}
+.status-badge--grey {
+  background: var(--rag-grey-050);
+  color: var(--rag-grey-text);
+}
+
+/* --- Page du plan --- */
+.plan {
+  max-width: 1180px;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+}
+
+.plan__header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 28px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--brand-050);
+  margin-bottom: 8px;
+}
+
+.plan__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 150px;
+}
+
+.plan__field--wide {
+  flex: 2 1 220px;
+}
+
+.plan__field--duration {
+  flex: 0 0 auto;
+}
+
+.plan__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ink-800);
+}
+
+.plan__value {
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.plan__value--title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--brand-700);
+}
+
+.plan__value--duration {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--ink-900);
+  line-height: 1;
+}
+
+.plan__section {
+  margin-top: 24px;
+}
+
+.plan__section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-800);
+  margin-bottom: 12px;
+}
+
+.plan__empty {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+/* --- Tableau WBS --- */
+.wbs-scroll {
+  /* Référence des éléments positionnés (ex. libellés masqués) : rognés avec le tableau. */
+  position: relative;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.wbs {
+  font-size: 0.84rem;
+  min-width: 760px;
+}
+
+.wbs thead th {
+  text-align: left;
+  padding: 9px 10px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ink-800);
+  background: var(--surface-alt);
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+
+.wbs tbody td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--surface-alt);
+  vertical-align: middle;
+}
+
+.wbs tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.wbs__row--phase td {
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.wbs__code {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.wbs__row--phase .wbs__code {
+  color: var(--ink-900);
+}
+
+.wbs__date {
+  white-space: nowrap;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.wbs__row--phase .wbs__date {
+  color: var(--ink-800);
+}
+
+.wbs__duration {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.wbs__assignee,
+.wbs__comments {
+  color: var(--text-muted);
+}
+
+/* --- Diagramme de Gantt --- */
+.gantt-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px 0;
+}
+
+.gantt {
+  width: 100%;
+  min-width: 860px;
+  height: auto;
+}
+
+.gantt__grid {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.gantt__axis {
+  fill: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.gantt__stripe {
+  fill: var(--surface-alt);
+  opacity: 0.6;
+}
+
+.gantt__label {
+  fill: var(--text);
+  font-size: 11px;
+}
+
+.gantt__label--phase {
+  font-weight: 700;
+  fill: var(--ink-900);
+}

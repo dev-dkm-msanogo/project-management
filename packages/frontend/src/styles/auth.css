@@ -1,0 +1,101 @@
+/* ---------------------------------------------------------------------------
+   Authentification : écran de connexion, menu utilisateur, indications de rôle.
+--------------------------------------------------------------------------- */
+
+/* --- Écran de connexion --- */
+.login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  /* Dégradé vert de la charte (P 140-5 C → P 140-7 C → vert foncé dérivé). */
+  background:
+    radial-gradient(circle at 80% 10%, rgba(82, 162, 116, 0.55), transparent 45%),
+    linear-gradient(160deg, var(--brand-600) 0%, var(--brand-700) 100%);
+}
+
+.login__card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 50px rgba(var(--shadow-color), 0.35);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.login__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 4px 0 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.login__brand-logo {
+  height: 46px;
+  width: auto;
+}
+
+.login__brand-app {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+.login__title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--ink-900);
+}
+
+.login__submit {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 0.92rem;
+}
+
+.login__notice {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+/* --- Barre supérieure : actions à droite (projet + utilisateur) --- */
+.content__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+/* --- Badges de rôle --- */
+.role-badge {
+  display: inline-block;
+  width: fit-content;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.role-badge--admin {
+  background: var(--rag-red-050);
+  color: var(--rag-red-text);
+}
+.role-badge--editor {
+  background: var(--brand-050);
+  color: var(--brand-700);
+}
+.role-badge--viewer {
+  background: var(--rag-grey-050);
+  color: var(--rag-grey-text);
+}

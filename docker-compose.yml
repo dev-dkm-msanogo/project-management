@@ -1,0 +1,25 @@
+# Base de données PostgreSQL pour le développement local.
+# Démarrage : docker compose up -d
+# Port hôte 5433 (évite tout conflit avec un PostgreSQL déjà installé sur 5432).
+# Puis dans packages/backend/.env : DATABASE_URL=postgres://gdp:gdp@localhost:5433/gdp
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: gdp-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: gdp
+      POSTGRES_PASSWORD: gdp
+      POSTGRES_DB: gdp
+    ports:
+      - '5433:5432'
+    volumes:
+      - gdp_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U gdp -d gdp']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  gdp_pgdata:

@@ -1,0 +1,206 @@
+/* ---------------------------------------------------------------------------
+   Périmètre et exigences : plans de gestion, registre des exigences (onglets,
+   matrices de traçabilité) et énoncé du périmètre.
+--------------------------------------------------------------------------- */
+
+/* --- Onglets --- */
+.tabs__list {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  margin-bottom: -1px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tabs__tab:hover {
+  color: var(--ink-900);
+}
+
+.tabs__tab:focus-visible {
+  outline: 2px solid var(--brand-500);
+  outline-offset: -2px;
+  border-radius: 6px 6px 0 0;
+}
+
+.tabs__tab--active {
+  color: var(--brand-700);
+  border-bottom-color: var(--brand-600);
+}
+
+.tabs__count {
+  min-width: 20px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--surface-alt);
+  color: var(--ink-800);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.tabs__tab--active .tabs__count {
+  background: var(--brand-050);
+  color: var(--brand-700);
+}
+
+/* --- Tables du registre des exigences --- */
+.register-table--requirements {
+  min-width: 1180px;
+}
+
+.register-table--traceability {
+  min-width: 1240px;
+}
+
+.register-table--coverage {
+  min-width: 720px;
+}
+
+.register-table--coverage .register-table__title {
+  width: 46%;
+}
+
+/* En-tête groupé de la matrice de traçabilité (Exigence · Relations · Traçabilité). */
+.trace-groups th {
+  text-align: center !important;
+  color: var(--brand-700) !important;
+  background: var(--brand-050) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.trace-groups th + th,
+.trace-group-start {
+  border-left: 2px solid var(--border);
+}
+
+.register-flag--inline {
+  margin-left: 8px;
+}
+
+/* Codes d'exigences reliées. */
+.req-codes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.req-code {
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: var(--surface-alt);
+  color: var(--ink-900);
+  font-size: 0.74rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: help;
+}
+
+/* --- Éditeur : besoins satisfaits --- */
+.req-needs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.req-needs__options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 6px 14px;
+}
+
+.req-needs__options .checkbox {
+  align-items: flex-start;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.req-needs__options .checkbox input {
+  flex: none;
+  margin-top: 1px;
+}
+
+/* --- Plans de gestion --- */
+.plan-sections {
+  display: grid;
+  gap: 4px;
+}
+
+.plan-sections__item + .plan-sections__item {
+  padding-top: 10px;
+  border-top: 1px solid var(--surface-alt);
+}
+
+/* --- Énoncé du périmètre : livrables numérotés --- */
+.scope-deliverables {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: deliverable;
+}
+
+.scope-deliverables li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px 10px 48px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  counter-increment: deliverable;
+}
+
+.scope-deliverables li::before {
+  content: counter(deliverable);
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--brand-050);
+  color: var(--brand-700);
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 24px;
+  text-align: center;
+}
+
+.scope-deliverables strong {
+  color: var(--ink-900);
+}
+
+.scope-deliverables span {
+  color: var(--text-muted);
+}
+
+/* --- Message d'information en tête d'éditeur --- */
+.editor__info {
+  padding: 10px 14px;
+  border: 1px solid var(--brand-050);
+  border-radius: var(--radius-sm);
+  background: var(--brand-050);
+  color: var(--brand-700);
+  font-size: 0.86rem;
+}

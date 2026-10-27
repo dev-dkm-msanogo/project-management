@@ -1,0 +1,60 @@
+/* ---------------------------------------------------------------------------
+   Registre des leçons apprises.
+--------------------------------------------------------------------------- */
+
+.register-table--lessons {
+  min-width: 1080px;
+}
+
+.lesson-headline {
+  display: block;
+  color: var(--ink-900);
+}
+
+.lesson-details {
+  display: block;
+  margin-top: 4px;
+  color: var(--ink-800);
+}
+
+.lesson-comments {
+  white-space: normal;
+}
+
+.lessons-filter {
+  min-width: 220px;
+}
+
+
+/* --- Pratiques récurrentes --- */
+.pattern-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pattern-card {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--rag-green);
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  color: var(--ink-900);
+}
+
+.pattern-card__codes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.pattern-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+}

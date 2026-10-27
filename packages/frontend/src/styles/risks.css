@@ -1,0 +1,119 @@
+/* ---------------------------------------------------------------------------
+   Registre des risques : synthèse, matrice probabilité × impact, tableau, éditeur.
+--------------------------------------------------------------------------- */
+
+/* --- Criticité : variables par niveau (fond de case, couleur forte, texte, texte sur la couleur forte) --- */
+.risk-level--low {
+  --level-bg: var(--rag-green-050);
+  --level-strong: var(--rag-green);
+  --level-text: var(--rag-green-text);
+  --level-on: #fff;
+}
+.risk-level--medium {
+  --level-bg: var(--rag-amber-050);
+  --level-strong: var(--rag-amber);
+  --level-text: var(--rag-amber-text);
+  --level-on: var(--ink-900);
+}
+.risk-level--high {
+  --level-bg: var(--rag-orange-050);
+  --level-strong: var(--rag-orange);
+  --level-text: var(--rag-orange-text);
+  --level-on: var(--ink-900);
+}
+.risk-level--critical {
+  --level-bg: var(--rag-red-050);
+  --level-strong: var(--rag-red);
+  --level-text: var(--rag-red-text);
+  --level-on: #fff;
+}
+
+/* --- Tableau du registre des risques --- */
+.register-table--risks {
+  min-width: 980px;
+}
+
+.register-table--risk-responses {
+  min-width: 800px;
+}
+
+/* Trois colonnes de texte : minimum réduit pour tenir sans défilement sur un écran courant. */
+.register-table--risk-responses .register-table__response {
+  min-width: 140px;
+}
+
+.risk-residual {
+  white-space: nowrap;
+}
+
+.risk-status {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* Impacts par objectif : sous-en-têtes compacts, impact retenu en gras. */
+.register-table thead th.risk-impacts__head {
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.register-table thead th.risk-impacts__objective {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.risk-impacts__max {
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.register-table__title-inline {
+  display: block;
+  font-weight: 600;
+  color: var(--ink-900);
+}
+
+/* Pour une opportunité, une tendance à la hausse est favorable. */
+.risk-trend--opportunity .trend--up {
+  color: var(--rag-green);
+}
+.risk-trend--opportunity .trend--down {
+  color: var(--rag-red);
+}
+
+.risk-row--closed td {
+  opacity: 0.55;
+}
+
+.risk-type {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.risk-type--threat {
+  background: var(--rag-red-050);
+  color: var(--rag-red-text);
+}
+
+.risk-type--opportunity {
+  background: var(--rag-green-050);
+  color: var(--rag-green);
+}
+
+.risk-score {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--level-strong);
+  color: var(--level-on, #fff);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}

@@ -1,0 +1,123 @@
+/* ---------------------------------------------------------------------------
+   Registre des modifications et demandes de modification.
+--------------------------------------------------------------------------- */
+
+.register-table--changes {
+  min-width: 980px;
+}
+
+.register-table--alternatives {
+  min-width: 760px;
+}
+
+/* Code et résumé ouvrent la demande. */
+.change-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--brand-700);
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.change-link:not(.change-link--title) {
+  white-space: nowrap;
+}
+
+.change-link--title {
+  color: var(--ink-900);
+  font-weight: 600;
+}
+
+.change-link:hover,
+.change-link:focus-visible {
+  text-decoration: underline;
+}
+
+.change-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.change-figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  margin-bottom: 14px;
+}
+
+.change-figures > div {
+  display: grid;
+  gap: 2px;
+}
+
+.change-figures__value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ink-900);
+  font-variant-numeric: tabular-nums;
+}
+
+.doc-panel .wbs-scroll + .plan-sections,
+.doc-panel .wbs-scroll + .doc-subtitle {
+  margin-top: 16px;
+}
+
+.change-alternative--recommended td {
+  background: var(--rag-green-050);
+}
+
+.change-alternative--recommended .status-badge {
+  margin-left: 8px;
+}
+
+.change-decision {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  color: var(--ink-800);
+}
+
+.change-add {
+  align-self: flex-start;
+}
+
+/* --- Réserve pour aléas --- */
+.contingency-meter {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.contingency-meter__bar {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--brand-500);
+}
+
+.contingency-meter__bar--over {
+  background: var(--rag-red);
+}
+
+.contingency-figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 24px;
+  margin: 10px 0 0;
+  font-size: 0.86rem;
+  color: var(--ink-800);
+}
+
+.contingency-figures--over {
+  color: var(--rag-red-text);
+}

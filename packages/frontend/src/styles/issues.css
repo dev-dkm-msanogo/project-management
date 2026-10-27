@@ -1,0 +1,31 @@
+/* ---------------------------------------------------------------------------
+   Journal des problèmes.
+--------------------------------------------------------------------------- */
+
+.register-table--issues {
+  min-width: 1040px;
+}
+
+.register-table--issues .register-table__title .register-table__muted {
+  font-weight: 400;
+}
+
+.register-table--issues td .status-badge {
+  white-space: nowrap;
+}
+
+.issue-links {
+  display: grid;
+  justify-items: start;
+  gap: 4px;
+}
+
+.issue-links .ref-link {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.issue-meta {
+  margin: 0 0 6px;
+  text-align: right;
+}

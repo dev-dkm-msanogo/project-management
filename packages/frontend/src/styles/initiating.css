@@ -1,0 +1,201 @@
+/* ---------------------------------------------------------------------------
+   Documents de démarrage : business case (synthèse financière), plan des
+   bénéfices (indicateurs) et matrice RACI.
+--------------------------------------------------------------------------- */
+
+/* --- Synthèse financière --- */
+.financial-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.financial-table th,
+.financial-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--surface-alt);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.financial-table thead th {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ink-800);
+  background: var(--surface-alt);
+  border-bottom: 2px solid var(--border);
+}
+
+.financial-table th[scope='row'],
+.financial-table thead th:first-child {
+  text-align: left;
+  white-space: normal;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.financial-table__subtotal th,
+.financial-table__subtotal td {
+  font-weight: 800;
+  color: var(--ink-900);
+  border-top: 1px solid var(--border);
+}
+
+.financial-table__net th,
+.financial-table__net td {
+  font-weight: 800;
+  color: var(--ink-900);
+  background: var(--rag-green-050);
+}
+
+.financial-table__negative,
+.financial-table__net .financial-table__negative {
+  color: var(--rag-red);
+}
+
+.editor-grid--financial {
+  grid-template-columns: minmax(0, 2fr) minmax(110px, 1fr) repeat(3, minmax(110px, 1fr));
+}
+
+/* --- Alternatives et indicateurs --- */
+.register-table--alternatives,
+.register-table--metrics {
+  min-width: 760px;
+}
+
+.alternative--selected td {
+  background: var(--rag-green-050);
+}
+
+.benefit-target {
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+/* --- Matrice RACI (couleurs du template : R vert, A rouge, C jaune, I bleu) --- */
+.raci-cell--R {
+  --raci-bg: var(--rag-green-050);
+  --raci-text: var(--rag-green-text);
+}
+.raci-cell--A {
+  --raci-bg: var(--rag-red-050);
+  --raci-text: var(--rag-red-text);
+}
+.raci-cell--C {
+  --raci-bg: var(--rag-amber-050);
+  --raci-text: var(--rag-amber-text);
+}
+.raci-cell--I {
+  --raci-bg: var(--info-050);
+  --raci-text: var(--info-text);
+}
+
+.raci-table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+
+.raci-table th,
+.raci-table td {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+.raci-table thead th {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--ink-900);
+  background: var(--surface-alt);
+}
+
+.raci-table thead th span {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.raci-table__activity {
+  min-width: 220px;
+  text-align: left !important;
+  font-weight: 600;
+  color: var(--ink-900);
+}
+
+.raci-table__activity .register-flag {
+  margin-left: 8px;
+}
+
+.raci-cell {
+  width: 1%;
+  min-width: 70px;
+  font-weight: 800;
+  background: var(--raci-bg, transparent);
+  color: var(--raci-text, var(--text));
+}
+
+.raci-legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.78rem;
+}
+
+.raci-legend li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--raci-bg);
+  color: var(--raci-text);
+}
+
+.raci-legend span {
+  color: var(--text);
+}
+
+/* Éditeur : une liste déroulante par case. */
+.raci-table--editor td,
+.raci-table--editor th {
+  padding: 4px 6px;
+}
+
+.raci-select {
+  width: 100%;
+  min-width: 56px;
+  padding: 6px 4px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 800;
+  text-align: center;
+  cursor: pointer;
+}
+
+.raci-select:hover,
+.raci-select:focus {
+  border-color: var(--border);
+  background: var(--surface);
+}
+
+.raci-row--invalid th {
+  box-shadow: inset 4px 0 0 var(--rag-red);
+}
+
+@media (max-width: 760px) {
+  .editor-grid--financial {
+    grid-template-columns: 1fr 1fr;
+  }
+}

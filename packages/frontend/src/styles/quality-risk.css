@@ -1,0 +1,37 @@
+/* ---------------------------------------------------------------------------
+   Plans de gestion de la qualité et des risques.
+--------------------------------------------------------------------------- */
+
+.quality-import {
+  align-self: flex-start;
+}
+
+.register-table--scale {
+  min-width: 640px;
+}
+
+.register-table--scale td.register-table__title {
+  white-space: nowrap;
+}
+
+/* Échelles de probabilité et d'impact : un niveau par ligne d'éditeur. */
+.scale-row + .scale-row {
+  padding-top: 10px;
+  border-top: 1px solid var(--surface-alt);
+}
+
+.editor-grid--4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+  .editor-grid--4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .editor-grid--4 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

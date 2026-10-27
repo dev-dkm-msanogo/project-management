@@ -1,0 +1,92 @@
+/* ---------------------------------------------------------------------------
+   Plan d'engagement des parties prenantes et plan de communication.
+--------------------------------------------------------------------------- */
+
+.register-table--engagement {
+  min-width: 1080px;
+}
+
+.register-table--communications {
+  min-width: 900px;
+}
+
+/* Niveau actuel → souhaité, avec l'écart à combler. */
+.engagement-shift {
+  min-width: 170px;
+  font-size: 0.8rem;
+}
+
+.engagement-shift .engagement-gap {
+  margin-left: 6px;
+}
+
+.engagement-detail {
+  display: block;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.register-table--engagement .skill-chips {
+  margin-top: 6px;
+}
+
+/* Méthodes de communication : libellé + teinte (jamais la couleur seule). */
+.style-chip {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.style-chip--push {
+  background: var(--brand-050);
+  color: var(--brand-700);
+}
+
+.style-chip--pull {
+  background: var(--rag-green-050);
+  color: var(--rag-green-text);
+}
+
+.style-chip--interactive {
+  background: var(--info-050);
+  color: var(--info-text);
+}
+
+.style-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+}
+
+.engagement-add-all {
+  align-self: flex-start;
+}
+
+/* --- Glossaire --- */
+.glossary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 8px 24px;
+  margin: 0;
+}
+
+.glossary__entry {
+  display: flex;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--surface-alt);
+  font-size: 0.86rem;
+}
+
+.glossary dt {
+  min-width: 56px;
+  font-weight: 800;
+  color: var(--ink-900);
+}
+
+.glossary dd {
+  margin: 0;
+  color: var(--text);
+}

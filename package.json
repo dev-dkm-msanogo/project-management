@@ -1,0 +1,25 @@
+{
+  "name": "gestion-projet-pmp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Application de gestion et de reporting de projet basée sur le PMP — architecture hexagonale",
+  "type": "module",
+  "workspaces": [
+    "packages/backend",
+    "packages/frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,green \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "npm run dev --workspace @gdp/backend",
+    "dev:web": "npm run dev --workspace @gdp/frontend",
+    "build": "npm run build --workspace @gdp/backend && npm run build --workspace @gdp/frontend",
+    "start": "npm run start --workspace @gdp/backend",
+    "typecheck": "npm run typecheck --workspace @gdp/backend && npm run typecheck --workspace @gdp/frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

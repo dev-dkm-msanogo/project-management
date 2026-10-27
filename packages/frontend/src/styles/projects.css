@@ -1,0 +1,161 @@
+/* --- Page Projets (registre multi-projet) --- */
+
+.projects {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.projects__new {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 20px;
+}
+
+.projects__panel-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-800);
+  margin-bottom: 14px;
+}
+
+.projects__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.projects__form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.projects__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.project-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.project-card--current {
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 2px var(--brand-050);
+}
+
+.project-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.project-card__name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--ink-900);
+}
+
+.project-card__id {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.project-card__desc {
+  font-size: 0.86rem;
+  color: var(--text);
+  line-height: 1.45;
+}
+
+.project-card__date {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin-top: auto;
+}
+
+.project-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--surface-alt);
+}
+
+/* --- Équipe d'un projet --- */
+.team-list {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.team-list__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 160px auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.team-list__who {
+  display: grid;
+  min-width: 0;
+}
+
+.team-list__who span {
+  overflow: hidden;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.team-list__role {
+  grid-column: 2 / 4;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+.team-list__empty {
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
+
+.team-add {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 160px auto;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+@media (max-width: 520px) {
+  .team-list__item,
+  .team-add {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .team-list__item .form-input {
+    grid-column: 1;
+  }
+}

@@ -1,0 +1,154 @@
+/* ---------------------------------------------------------------------------
+   Charte du projet : lecture « document » (faits clés, objectifs, périmètre,
+   jalons, gouvernance) et références tirées des registres.
+--------------------------------------------------------------------------- */
+
+.charter__approval {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
+
+/* --- Jalons --- */
+.charter__timeline {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.88rem;
+}
+
+.charter__timeline li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 12px;
+  padding: 6px 0 6px 18px;
+  border-left: 2px solid var(--border);
+}
+
+.charter__timeline li::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: -6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--brand-600);
+}
+
+.charter__timeline time {
+  font-weight: 700;
+  color: var(--ink-800);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Risque global et budget --- */
+.charter__risk-level {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 10px;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
+
+.charter__amount {
+  margin: 0 0 6px;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--ink-900);
+}
+
+/* --- Objectifs (tableau à rubriques) --- */
+.charter__objectives-table {
+  min-width: 560px;
+}
+
+/* --- Autorités --- */
+.charter__authority {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+}
+
+.charter__authority th,
+.charter__authority td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--surface-alt);
+  text-align: left;
+  vertical-align: top;
+}
+
+.charter__authority th {
+  width: 240px;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.charter__authority th span {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* --- Approbations (signatures) --- */
+.charter__signatures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.charter__signature {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+.charter__signature strong {
+  font-size: 0.98rem;
+  color: var(--ink-900);
+}
+
+.charter__signature--signed {
+  border-style: solid;
+  border-color: var(--rag-green);
+  background: var(--rag-green-050);
+}
+
+.charter__signature--signed span:last-child {
+  color: var(--rag-green);
+  font-weight: 700;
+}
+
+.charter__signature-role {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 600px) {
+  .charter__authority th {
+    width: 42%;
+  }
+
+  .charter__timeline li {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}
