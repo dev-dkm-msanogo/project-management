@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { BacklogItemInput, BacklogItemType } from '@shared/index';
 import { backlogApi } from '@/api/project-documents';
 import { useAuth } from '@/auth/AuthContext';
+import { BacklogDecision } from '@/components/agile/BacklogDecision';
 import { BacklogItemEditor } from '@/components/agile/BacklogItemEditor';
 import { PageActions } from '@/components/header/PageActions';
 import { PersonName } from '@/components/people/People';
@@ -9,6 +10,7 @@ import { EditCell, EditHeader } from '@/components/ui/EditEntry';
 import { ReadOnlyBadge } from '@/components/ui/ReadOnlyBadge';
 import { SummaryTiles } from '@/components/ui/SummaryTiles';
 import { Tabs } from '@/components/ui/Tabs';
+import { useBacklogRights } from '@/hooks/useBacklogRights';
 import { useProductBacklog } from '@/hooks/useProjectDocuments';
 import {
   formatPoints,
@@ -17,6 +19,7 @@ import {
   ITEM_TYPE_LABELS,
   productBacklogDtoToInput,
 } from '@/lib/agile-format';
+import { formatShortDate } from '@/lib/format';
 import { PRIORITY_LABELS, PRIORITY_MODIFIERS } from '@/lib/requirements-format';
 import type { AppView } from '@/navigation/pmp';
 
@@ -27,13 +30,17 @@ interface BacklogFeatureProps {
   onNavigate: (view: AppView) => void;
 }
 
-/** Page « Carnet de produit » : éléments dans l'ordre de priorité, épopées et définition de « terminé ». */
+/**
+ * Page « Carnet de produit » : éléments dans l'ordre de priorité, épopées et définition de « terminé ».
+ * Le Product Owner ordonne, priorise et accepte ; l'équipe propose, estime et fait avancer.
+ */
 export function BacklogFeature({ projectId, onNavigate }: BacklogFeatureProps) {
   const { data, loading, error, reload } = useProductBacklog(projectId);
   const { canEdit } = useAuth();
   const [editing, setEditing] = useState<{ key: string | null; type: BacklogItemType } | null>(null);
   const [tab, setTab] = useState<BacklogTab>('todo');
   const [moveError, setMoveError] = useState<string | null>(null);
+  const rights = useBacklogRights(data);
 
   useEffect(() => setEditing(null), [projectId]);
 
@@ -90,11 +97,13 @@ export function BacklogFeature({ projectId, onNavigate }: BacklogFeatureProps) {
         ) : (
           data && (
             <>
-              <button type="button" className="btn btn--ghost" onClick={() => setEditing({ key: null, type: 'EPIC' })}>
-                + Épopée
-              </button>
+              {rights.decide && (
+                <button type="button" className="btn btn--ghost" onClick={() => setEditing({ key: null, type: 'EPIC' })}>
+                  + Épopée
+                </button>
+              )}
               <button type="button" className="btn btn--primary" onClick={() => setEditing({ key: null, type: 'STORY' })}>
-                + Élément du carnet
+                {rights.decide ? '+ Élément du carnet' : '+ Proposer un élément'}
               </button>
             </>
           )
@@ -114,6 +123,19 @@ export function BacklogFeature({ projectId, onNavigate }: BacklogFeatureProps) {
               { label: 'Éléments non estimés', value: metrics.unestimated, tone: 'warning' },
             ]}
           />
+          <p className={`backlog-owner${data.productOwner ? '' : ' backlog-owner--missing'}`} role="status">
+            {data.productOwner ? (
+              <>
+                Product Owner : <strong>{data.productOwner.name}</strong> — il ordonne le carnet, le priorise et accepte
+                les éléments ; l'équipe estime et fait avancer le travail.
+              </>
+            ) : (
+              <>
+                Aucun Product Owner désigné : le chef de projet priorise et accepte. Désignez-le dans l'équipe du projet
+                (portefeuille, « Équipe »).
+              </>
+            )}
+          </p>
           <section className="doc-panel">
             <Tabs
               label="Éléments du carnet"
@@ -150,7 +172,7 @@ export function BacklogFeature({ projectId, onNavigate }: BacklogFeatureProps) {
                             <td>
                               <div className="backlog-rank">
                                 <span>{index + 1}</span>
-                                {canEdit && tab === 'todo' && (
+                                {rights.decide && tab === 'todo' && (
                                   <span className="backlog-rank__moves">
                                     <button type="button" className="btn btn--ghost btn--sm" aria-label={`Monter ${item.code}`}
                                       disabled={index === 0} onClick={() => void move(item, -1, shown)}>
@@ -172,6 +194,17 @@ export function BacklogFeature({ projectId, onNavigate }: BacklogFeatureProps) {
                                 {item.requirementCode && ` · exigence ${item.requirementCode}`}
                                 {item.wbsCode && ` · lot ${item.wbsCode} ${data.references.workPackages[item.wbsCode] ?? ''}`}
                               </span>
+                              {item.status === 'DONE' && (
+                                <span className="register-table__muted">
+                                  Accepté le {formatShortDate(item.doneOn)}
+                                  {item.acceptedBy && ` par ${item.acceptedBy.name}`}
+                                </span>
+                              )}
+                              {item.refusal && (
+                                <span className="backlog-refusal">
+                                  Refusé le {formatShortDate(item.refusal.on)} par {item.refusal.by} : {item.refusal.reason}
+                                </span>
+                              )}
                             </td>
                             <td>
                               <span className={`status-badge status-badge--${PRIORITY_MODIFIERS[item.priority]}`}>
@@ -188,6 +221,7 @@ export function BacklogFeature({ projectId, onNavigate }: BacklogFeatureProps) {
                                 <span className={`status-badge status-badge--${ITEM_STATUS_MODIFIERS[item.status]}`}>
                                   {ITEM_STATUS_LABELS[item.status]}
                                 </span>
+                                {rights.decide && <BacklogDecision projectId={projectId} item={item} onDecided={reload} />}
                               </td>
                             )}
                             {tab !== 'epics' && <td>{iterationName(item.iterationCode)}</td>}

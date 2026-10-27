@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { ProjectCandidateDto, ProjectRole } from '@shared/index';
+import type { ProjectCandidateDto, ProjectMethodology, ProjectRole } from '@shared/index';
 import { fetchProjectTeam, saveProjectTeam } from '@/api/project-client';
 import { SelectInput } from '@/components/form/controls';
 import { Dialog, useAsyncAction } from '@/components/ui/Dialog';
@@ -7,7 +7,7 @@ import { useProjectResource } from '@/hooks/useProjectResource';
 import { PROJECT_ROLE_LABELS } from '@/lib/admin-format';
 
 interface ProjectTeamDialogProps {
-  project: { id: string; name: string; access: ProjectRole };
+  project: { id: string; name: string; access: ProjectRole; methodology: ProjectMethodology };
   onClose: () => void;
 }
 
@@ -20,20 +20,30 @@ const ROLE_OPTIONS = (Object.keys(PROJECT_ROLE_LABELS) as ProjectRole[]).map((va
 
 /**
  * Équipe d'un projet : consultée par ses membres, gérée par le chef de projet. Seuls les membres (et
- * les administrateurs) voient le projet.
+ * les administrateurs) voient le projet. En hybride et en agile, un membre qui rédige peut être
+ * désigné Product Owner : il priorise le carnet et accepte les éléments.
  */
 export function ProjectTeamDialog({ project, onClose }: ProjectTeamDialogProps) {
   const team = useProjectResource(project.id, fetchProjectTeam);
   const manages = project.access === 'MANAGER';
   const [members, setMembers] = useState<DraftMember[]>([]);
   const [adding, setAdding] = useState({ userId: '', role: 'CONTRIBUTOR' as ProjectRole });
+  const [productOwnerId, setProductOwnerId] = useState<string | null>(null);
+  const iterative = project.methodology !== 'PREDICTIVE';
+  // Le Product Owner rédige : un membre retiré ou passé lecteur ne l'est plus.
+  const owner = members.find((member) => member.userId === productOwnerId && member.role !== 'READER') ?? null;
   const [busy, error, save] = useAsyncAction(async () => {
-    await saveProjectTeam(project.id, { members: members.map(({ userId, role }) => ({ userId, role })) });
+    await saveProjectTeam(project.id, {
+      members: members.map(({ userId, role }) => ({ userId, role })),
+      productOwnerId: owner?.userId ?? null,
+    });
     onClose();
   });
 
   useEffect(() => {
-    if (team.data) setMembers(team.data.members.map(({ userId, name, email, role }) => ({ userId, name, email, role })));
+    if (!team.data) return;
+    setMembers(team.data.members.map(({ userId, name, email, role }) => ({ userId, name, email, role })));
+    setProductOwnerId(team.data.productOwnerId);
   }, [team.data]);
 
   const chosen = new Set(members.map((member) => member.userId));
@@ -85,6 +95,35 @@ export function ProjectTeamDialog({ project, onClose }: ProjectTeamDialogProps) 
             ))}
             {members.length === 0 && <li className="team-list__empty">Aucun membre : seuls les administrateurs voient ce projet.</li>}
           </ul>
+        )}
+        {team.data && (iterative || owner) && (
+          <div className="team-owner">
+            <label className="field">
+              <span className="field__label">Product Owner</span>
+              {manages ? (
+                <select
+                  className="form-input"
+                  value={owner?.userId ?? ''}
+                  onChange={(event) => setProductOwnerId(event.target.value || null)}
+                >
+                  <option value="">Aucun : le chef de projet priorise et accepte</option>
+                  {members
+                    .filter((member) => member.role !== 'READER')
+                    .map((member) => (
+                      <option key={member.userId} value={member.userId}>
+                        {member.name}
+                      </option>
+                    ))}
+                </select>
+              ) : (
+                <span className="field__static">{owner?.name ?? 'Aucun : le chef de projet priorise et accepte'}</span>
+              )}
+              <span className="field__hint">
+                Il ordonne et priorise le carnet de produit, accepte ou refuse les éléments ; l'équipe estime et fait
+                avancer le travail.
+              </span>
+            </label>
+          </div>
         )}
         {manages && team.data && (
           <div className="team-add">

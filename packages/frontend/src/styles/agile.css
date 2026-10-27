@@ -351,3 +351,39 @@
     grid-template-columns: repeat(4, minmax(240px, 80vw));
   }
 }
+
+/* --- Product Owner : qui décide, décisions et refus --- */
+.backlog-owner {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+
+.backlog-owner--missing {
+  border-color: var(--rag-amber);
+  background: color-mix(in srgb, var(--rag-amber) 10%, var(--surface));
+}
+
+.backlog-decision {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-left: 6px;
+}
+
+.backlog-refusal {
+  display: block;
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--rag-red-text);
+}
+
+.team-owner {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}

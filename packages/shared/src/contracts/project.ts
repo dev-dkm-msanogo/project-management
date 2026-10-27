@@ -57,10 +57,13 @@ export interface ProjectCandidateDto {
 export interface ProjectTeamDto {
   projectId: string;
   members: ProjectMemberDto[];
+  /** Membre désigné Product Owner (projets hybrides et agiles) ; `null` : le chef de projet décide. */
+  productOwnerId: string | null;
   /** Comptes actifs proposés à l'ajout : seulement pour qui gère l'équipe (sinon vide). */
   candidates: ProjectCandidateDto[];
 }
 
 export interface ProjectTeamInput {
   members: { userId: string; role: ProjectRole }[];
+  productOwnerId: string | null;
 }

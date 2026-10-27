@@ -33,6 +33,10 @@ export interface BacklogItemProps {
   wbsCode: string | null;
   /** Ressource du référentiel (identifiant). */
   assigneeId: string | null;
+  /** Qui a accepté l'élément : seulement une fois terminé (absent pour un élément terminé avant le rôle). */
+  acceptedBy: { id: string | null; name: string } | null;
+  /** Dernier refus : seulement sur un élément non terminé. */
+  refusal: { reason: string; by: string; on: Date } | null;
 }
 
 const isOneOf = <T extends string>(values: readonly T[], value: string): value is T =>
@@ -65,6 +69,12 @@ export class BacklogItem {
     if (!done && params.doneOn) {
       throw new DomainError(`${code} : un élément non terminé n'a pas de date d'achèvement.`);
     }
+    if (!done && params.acceptedBy) {
+      throw new DomainError(`${code} : seul un élément terminé est accepté.`);
+    }
+    if (done && params.refusal) {
+      throw new DomainError(`${code} : un élément accepté ne porte plus de refus.`);
+    }
     const epic = params.type === 'EPIC';
     if (epic && (params.points !== null || optional(params.iterationCode) || optional(params.epicCode))) {
       throw new DomainError(`${code} : une épopée n'est ni estimée, ni planifiée dans une itération, ni rattachée à une épopée.`);
@@ -86,6 +96,12 @@ export class BacklogItem {
         requirementCode: optional(params.requirementCode),
         wbsCode: optional(params.wbsCode),
         assigneeId: optional(params.assigneeId),
+        acceptedBy: params.acceptedBy && { id: params.acceptedBy.id, name: params.acceptedBy.name.trim() },
+        refusal: params.refusal && {
+          reason: requiredText(params.refusal.reason, `${code} : indiquez le motif du refus.`),
+          by: params.refusal.by.trim(),
+          on: new Date(params.refusal.on),
+        },
       }),
     );
   }

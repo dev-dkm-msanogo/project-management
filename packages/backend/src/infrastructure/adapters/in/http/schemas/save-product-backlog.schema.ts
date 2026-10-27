@@ -21,6 +21,11 @@ export const saveProductBacklogBodySchema = z.object({
         requirementCode: entryCode.nullable(),
         wbsCode: z.string().trim().max(40).nullable(),
         assigneeId: z.string().trim().max(100).nullable(),
+        acceptedBy: z.object({ id: z.string().max(100).nullable(), name: z.string().max(200) }).nullable().default(null),
+        refusal: z
+          .object({ reason: z.string().trim().max(1000), by: z.string().max(200), on: isoDate })
+          .nullable()
+          .default(null),
       }),
     )
     .max(1000),
@@ -40,4 +45,14 @@ export const saveProductBacklogBodySchema = z.object({
       }),
     )
     .max(200),
+});
+
+export const backlogDecisionParamsSchema = z.object({
+  projectId: z.string().trim().min(1).max(100),
+  code: entryCode,
+});
+
+export const backlogDecisionBodySchema = z.object({
+  decision: z.enum(['ACCEPT', 'REJECT']),
+  comment: z.string().trim().max(1000).nullable().default(null),
 });

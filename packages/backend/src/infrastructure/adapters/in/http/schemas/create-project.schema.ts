@@ -15,4 +15,5 @@ export const projectTeamBodySchema = z.object({
   members: z
     .array(z.object({ userId: z.string().trim().min(1).max(100), role: z.enum(['MANAGER', 'CONTRIBUTOR', 'READER']) }))
     .max(200),
+  productOwnerId: z.string().trim().min(1).max(100).nullable().default(null),
 });

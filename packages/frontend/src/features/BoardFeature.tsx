@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import { BACKLOG_STATUSES, type BacklogItemStatus } from '@shared/index';
 import { backlogApi } from '@/api/project-documents';
 import { useAuth } from '@/auth/AuthContext';
+import { BacklogDecision } from '@/components/agile/BacklogDecision';
 import { PageActions } from '@/components/header/PageActions';
 import { PersonName } from '@/components/people/People';
 import { ReadOnlyBadge } from '@/components/ui/ReadOnlyBadge';
+import { useBacklogRights } from '@/hooks/useBacklogRights';
 import { useProductBacklog } from '@/hooks/useProjectDocuments';
 import { formatPoints, ITEM_STATUS_LABELS, ITEM_TYPE_LABELS, productBacklogDtoToInput, withStatus } from '@/lib/agile-format';
 import { PRIORITY_LABELS } from '@/lib/requirements-format';
@@ -15,9 +17,13 @@ interface BoardFeatureProps {
   onNavigate: (view: AppView) => void;
 }
 
+/** Colonnes où l'équipe fait avancer le travail ; « Terminé » vient de la décision du Product Owner. */
+const WORK_COLUMNS = BACKLOG_STATUSES.filter((status) => status !== 'DONE');
+
 /**
- * Page « Tableau de suivi » : les éléments de l'itération, colonne par statut. Un élément se
- * déplace par glisser-déposer ou par ses flèches ; « Terminé » le date du jour.
+ * Page « Tableau de suivi » : les éléments de l'itération, colonne par statut. L'équipe les fait
+ * avancer jusqu'à la revue (glisser-déposer ou flèches) ; le Product Owner accepte ou refuse les
+ * éléments en revue, et peut rouvrir un élément accepté.
  */
 export function BoardFeature({ projectId, onNavigate }: BoardFeatureProps) {
   const { data, loading, error, reload } = useProductBacklog(projectId);
@@ -26,6 +32,7 @@ export function BoardFeature({ projectId, onNavigate }: BoardFeatureProps) {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [dragged, setDragged] = useState<string | null>(null);
+  const rights = useBacklogRights(data);
 
   useEffect(() => setSelected(null), [projectId]);
 
@@ -76,6 +83,13 @@ export function BoardFeature({ projectId, onNavigate }: BoardFeatureProps) {
         )}
         {!canEdit && <ReadOnlyBadge />}
       </PageActions>
+      {data && (
+        <p className={`backlog-owner${data.productOwner ? '' : ' backlog-owner--missing'}`} role="status">
+          {data.productOwner
+            ? `Acceptation par le Product Owner : ${data.productOwner.name}.`
+            : 'Aucun Product Owner désigné : le chef de projet accepte les éléments en revue.'}
+        </p>
+      )}
 
       {loading && <p className="app__status">Chargement du tableau…</p>}
       {error && <p className="app__status app__status--error">{error}</p>}
@@ -103,10 +117,10 @@ export function BoardFeature({ projectId, onNavigate }: BoardFeatureProps) {
             return (
               <section
                 key={status}
-                className={`board__column${dragged ? ' board__column--droppable' : ''}`}
+                className={`board__column${dragged && status !== 'DONE' ? ' board__column--droppable' : ''}`}
                 aria-label={ITEM_STATUS_LABELS[status]}
                 onDragOver={(event) => {
-                  if (canEdit && dragged) event.preventDefault();
+                  if (rights.develop && dragged && status !== 'DONE') event.preventDefault();
                 }}
                 onDrop={(event) => {
                   event.preventDefault();
@@ -125,7 +139,7 @@ export function BoardFeature({ projectId, onNavigate }: BoardFeatureProps) {
                     <li
                       key={item.code}
                       className="board-card"
-                      draggable={canEdit && !saving}
+                      draggable={rights.develop && item.status !== 'DONE' && !saving}
                       onDragStart={() => setDragged(item.code)}
                       onDragEnd={() => setDragged(null)}
                     >
@@ -138,32 +152,39 @@ export function BoardFeature({ projectId, onNavigate }: BoardFeatureProps) {
                         {ITEM_TYPE_LABELS[item.type]} · {PRIORITY_LABELS[item.priority]}
                         {item.epicCode && ` · ${item.epicCode}`}
                       </p>
+                      {item.acceptedBy && <p className="board-card__meta">Accepté par {item.acceptedBy.name}</p>}
+                      {item.refusal && (
+                        <p className="backlog-refusal">
+                          Refusé par {item.refusal.by} : {item.refusal.reason}
+                        </p>
+                      )}
                       <div className="board-card__bottom">
                         <span className="board-card__person">
                           <PersonName id={item.assigneeId} empty="Non affecté" />
                         </span>
-                        {canEdit && (
+                        {rights.develop && status !== 'DONE' && (
                           <span className="board-card__moves">
                             <button
                               type="button"
                               className="btn btn--ghost btn--sm"
                               disabled={column === 0 || saving}
-                              aria-label={`${item.code} : passer à « ${ITEM_STATUS_LABELS[BACKLOG_STATUSES[column - 1] ?? status]} »`}
-                              onClick={() => void moveTo(item.code, BACKLOG_STATUSES[column - 1]!)}
+                              aria-label={`${item.code} : passer à « ${ITEM_STATUS_LABELS[WORK_COLUMNS[column - 1] ?? status]} »`}
+                              onClick={() => void moveTo(item.code, WORK_COLUMNS[column - 1]!)}
                             >
                               ←
                             </button>
                             <button
                               type="button"
                               className="btn btn--ghost btn--sm"
-                              disabled={column === BACKLOG_STATUSES.length - 1 || saving}
-                              aria-label={`${item.code} : passer à « ${ITEM_STATUS_LABELS[BACKLOG_STATUSES[column + 1] ?? status]} »`}
-                              onClick={() => void moveTo(item.code, BACKLOG_STATUSES[column + 1]!)}
+                              disabled={column === WORK_COLUMNS.length - 1 || saving}
+                              aria-label={`${item.code} : passer à « ${ITEM_STATUS_LABELS[WORK_COLUMNS[column + 1] ?? status]} »`}
+                              onClick={() => void moveTo(item.code, WORK_COLUMNS[column + 1]!)}
                             >
                               →
                             </button>
                           </span>
                         )}
+                        {rights.decide && <BacklogDecision projectId={projectId} item={item} onDecided={reload} />}
                       </div>
                     </li>
                   ))}

@@ -82,6 +82,8 @@ export function blankItem(items: readonly BacklogItemInput[], type: BacklogItemT
     requirementCode: null,
     wbsCode: null,
     assigneeId: null,
+    acceptedBy: null,
+    refusal: null,
   };
 }
 

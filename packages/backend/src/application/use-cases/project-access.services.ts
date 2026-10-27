@@ -76,6 +76,7 @@ export class GetProjectTeamService implements GetProjectTeamUseCase {
     const memberIds = new Set(members.map((member) => member.userId));
     return {
       projectId: query.projectId,
+      productOwnerId: members.find((member) => member.productOwner)?.userId ?? null,
       members: members
         .flatMap(({ userId, role }) => {
           const user = byId.get(userId);
@@ -101,7 +102,14 @@ export class SaveProjectTeamService implements SaveProjectTeamUseCase {
   ) {}
 
   async execute(command: { projectId: string; input: ProjectTeamInput }): Promise<ProjectTeamDto> {
-    const team = ProjectTeam.create(command.projectId, command.input.members);
+    const { members: chosen, productOwnerId } = command.input;
+    if (productOwnerId && !chosen.some((member) => member.userId === productOwnerId)) {
+      throw new DomainError("Le Product Owner doit être membre de l'équipe.");
+    }
+    const team = ProjectTeam.create(
+      command.projectId,
+      chosen.map((member) => ({ ...member, productOwner: member.userId === productOwnerId })),
+    );
     const [current, users] = await Promise.all([this.members.listByProject(command.projectId), this.users.list()]);
     const byId = new Map(users.map((user) => [user.id, user]));
     const already = new Set(current.map((member) => member.userId));

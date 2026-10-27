@@ -8,11 +8,11 @@ export class PostgresProjectMemberRepository implements ProjectMemberRepository 
   constructor(private readonly pool: Pool) {}
 
   async listByProject(projectId: string): Promise<ProjectMember[]> {
-    const result = await this.pool.query<{ user_id: string; role: ProjectRole }>(
-      'SELECT user_id, role FROM project_members WHERE project_id = $1 ORDER BY user_id',
+    const result = await this.pool.query<{ user_id: string; role: ProjectRole; product_owner: boolean }>(
+      'SELECT user_id, role, product_owner FROM project_members WHERE project_id = $1 ORDER BY user_id',
       [projectId],
     );
-    return result.rows.map((row) => ({ userId: row.user_id, role: row.role }));
+    return result.rows.map((row) => ({ userId: row.user_id, role: row.role, productOwner: row.product_owner }));
   }
 
   async listByUser(userId: string): Promise<{ projectId: string; role: ProjectRole }[]> {
@@ -30,11 +30,10 @@ export class PostgresProjectMemberRepository implements ProjectMemberRepository 
       await client.query('BEGIN');
       await client.query('DELETE FROM project_members WHERE project_id = $1', [team.projectId]);
       for (const member of team.members) {
-        await client.query('INSERT INTO project_members (project_id, user_id, role) VALUES ($1, $2, $3)', [
-          team.projectId,
-          member.userId,
-          member.role,
-        ]);
+        await client.query(
+          'INSERT INTO project_members (project_id, user_id, role, product_owner) VALUES ($1, $2, $3, $4)',
+          [team.projectId, member.userId, member.role, member.productOwner],
+        );
       }
       await client.query('COMMIT');
     } catch (error) {

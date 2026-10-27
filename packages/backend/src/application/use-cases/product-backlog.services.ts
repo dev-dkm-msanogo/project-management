@@ -5,6 +5,8 @@ import { DomainError } from '@domain/errors/domain-errors';
 import { isoDate, parseIsoDate } from '@application/mappers/iso-date';
 import { productBacklogToInput } from '@application/mappers/product-backlog.mappers';
 import type { ProjectDocumentRepository } from '@application/ports/out/project-document.repository';
+import type { ProjectMemberRepository } from '@application/ports/out/project-member.repository';
+import type { UserRepository } from '@application/ports/out/user.repository';
 import type { ProjectPlanRepository } from '@application/ports/out/project-plan.repository';
 import type {
   BacklogItemInput,
@@ -19,6 +21,8 @@ interface BacklogSources {
   plans: ProjectPlanRepository;
   requirements: ProjectDocumentRepository<RequirementsRegister>;
   managementPlans: ProjectDocumentRepository<ProjectManagementPlan>;
+  members: ProjectMemberRepository;
+  users: UserRepository;
   clock: () => Date;
 }
 
@@ -74,11 +78,14 @@ export function productBacklogServices(sources: BacklogSources) {
   return {
     toDto: async (backlog: ProductBacklog): Promise<ProductBacklogDto> => {
       const { projectId } = backlog;
-      const [workPackages, requirements, managementPlan] = await Promise.all([
+      const [workPackages, requirements, managementPlan, members] = await Promise.all([
         workPackagesOf(projectId),
         sources.requirements.findByProjectId(projectId),
         sources.managementPlans.findByProjectId(projectId),
+        sources.members.listByProject(projectId),
       ]);
+      const ownerId = members.find((member) => member.productOwner)?.userId ?? null;
+      const owner = ownerId ? await sources.users.findById(ownerId) : null;
       const today = isoDate(sources.clock());
       const input = productBacklogToInput(backlog);
       const work = input.items.filter((item) => item.type !== 'EPIC');
@@ -151,6 +158,7 @@ export function productBacklogServices(sources: BacklogSources) {
           workPackages: Object.fromEntries(workPackages),
         },
         definitionOfDone: managementPlan?.props.developmentApproach.definitionOfDone ?? '',
+        productOwner: ownerId ? { id: ownerId, name: owner?.name ?? 'Compte inconnu' } : null,
       };
     },
 

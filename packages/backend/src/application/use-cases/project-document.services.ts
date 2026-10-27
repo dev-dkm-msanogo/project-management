@@ -1,4 +1,5 @@
 import { DocumentNotFoundError } from '@application/errors/application-errors';
+import type { DocumentActor } from '@application/ports/in/project-document.use-cases';
 import type {
   DeleteProjectDocumentUseCase,
   GetProjectDocumentUseCase,
@@ -14,8 +15,8 @@ export type ToDto<T, Dto> = (document: T) => Dto | Promise<Dto>;
 export interface DocumentTranslation<T, Input, Dto> {
   fromInput: (projectId: string, input: Input) => T;
   toDto: ToDto<T, Dto>;
-  /** Contrôle avant enregistrement, ex. références vers un autre document du projet. */
-  beforeSave?: (document: T) => Promise<void>;
+  /** Contrôle avant enregistrement, ex. références vers un autre document du projet, droits de qui enregistre. */
+  beforeSave?: (document: T, actor: DocumentActor | null) => Promise<void>;
 }
 
 /** Lecture d'un document rédigé ; `notFound` fournit l'erreur métier (404) s'il est absent. */
@@ -55,9 +56,9 @@ export class SaveProjectDocumentService<T, Input, Dto> implements SaveProjectDoc
     private readonly translation: DocumentTranslation<T, Input, Dto>,
   ) {}
 
-  async execute(command: { projectId: string; input: Input }): Promise<Dto> {
+  async execute(command: { projectId: string; input: Input; actor?: DocumentActor }): Promise<Dto> {
     const document = this.translation.fromInput(command.projectId, command.input);
-    await this.translation.beforeSave?.(document);
+    await this.translation.beforeSave?.(document, command.actor ?? null);
     await this.repository.save(document);
     return this.translation.toDto(document);
   }

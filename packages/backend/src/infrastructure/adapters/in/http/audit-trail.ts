@@ -108,6 +108,10 @@ function describe(request: FastifyRequest, reply: FastifyReply): Described | nul
     'POST /api/v1/projects/:projectId/change-log/:code/decision': () => ({
       action: `Décision sur la demande de modification ${params.code ?? ''}`.trim(),
     }),
+    'POST /api/v1/projects/:projectId/backlog/:code/decision': () => ({
+      action: `Décision du Product Owner sur ${params.code ?? ''}`.trim(),
+      detail: text(body.decision),
+    }),
     'POST /api/v1/projects/:projectId/source-selections/award': () => ({ action: "Attribution d'un achat", detail: text(body.procurement) }),
     'PUT /api/v1/projects/:projectId/tasks/:wbs/progress': () => ({ action: `Avancement de la tâche ${params.wbs ?? ''}`.trim() }),
     'POST /api/v1/admin/users': () => ({ action: 'Compte créé', detail: text(body.email, 254) }),

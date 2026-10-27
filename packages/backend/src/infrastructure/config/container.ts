@@ -135,6 +135,8 @@ import { ProductBacklog } from '@domain/entities/product-backlog';
 import { inputToProductBacklog, productBacklogToInput } from '@application/mappers/product-backlog.mappers';
 import { backlogDrivenProgress } from '@application/use-cases/backlog-progress';
 import { productBacklogServices } from '@application/use-cases/product-backlog.services';
+import { DecideBacklogItemService } from '@application/use-cases/backlog-decision.service';
+import { assertBacklogChange, backlogRightsOf } from '@application/use-cases/backlog-rights';
 import type { ProductBacklogDto, ProductBacklogInput } from '@shared/index';
 import type { ClosureReport } from '@domain/entities/closure-report';
 import { DeliverablesRegister } from '@domain/entities/deliverables-register';
@@ -656,6 +658,7 @@ export interface AppContainer {
   getClosureReport: GetProjectDocumentUseCase<ClosureReportDto>;
   getProductBacklog: GetProjectDocumentUseCase<ProductBacklogDto>;
   saveProductBacklog: SaveProjectDocumentUseCase<ProductBacklogInput, ProductBacklogDto>;
+  decideBacklogItem: DecideBacklogItemService;
   saveClosureReport: SaveProjectDocumentUseCase<ClosureReportInput, ClosureReportDto>;
   updateTaskProgress: UpdateTaskProgressUseCase;
   getMyTasks: GetMyTasksUseCase;
@@ -1104,6 +1107,8 @@ function wireUseCases(stores: Repositories, hasher: PasswordHasher): AppContaine
     plans: repos.plans,
     requirements: repos.requirements,
     managementPlans: repos.projectManagementPlans,
+    members: repos.projectMembers,
+    users: repos.users,
     clock,
   });
   // Rapport exécutif alimenté par les éléments du projet, calculés à sa date.
@@ -1505,8 +1510,22 @@ function wireUseCases(stores: Repositories, hasher: PasswordHasher): AppContaine
     saveProductBacklog: new SaveProjectDocumentService(checked.productBacklogs, {
       fromInput: inputToProductBacklog,
       toDto: backlog.toDto,
-      beforeSave: backlog.beforeSave,
+      beforeSave: async (next, actor) => {
+        // Droits du Product Owner et de l'équipe (hors requête : enregistrement interne, sans contrôle).
+        if (actor) {
+          const previous = await loadOrEmpty(repos.productBacklogs, next.projectId, ProductBacklog.empty);
+          assertBacklogChange(previous, next, await backlogRightsOf(repos.projectMembers, next.projectId, actor));
+        }
+        await backlog.beforeSave(next);
+      },
     }),
+    decideBacklogItem: new DecideBacklogItemService(
+      checked.productBacklogs,
+      repos.projectMembers,
+      repos.users,
+      backlog.toDto,
+      clock,
+    ),
     updateTaskProgress: new UpdateTaskProgressService(
       repos.plans,
       repos.taskProgress,

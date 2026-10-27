@@ -124,6 +124,8 @@ export async function migrate(pool: Pool): Promise<void> {
       PRIMARY KEY (project_id, user_id)
     );
   `);
+  // Product Owner : un membre au plus par projet (projets hybrides et agiles).
+  await pool.query(`ALTER TABLE project_members ADD COLUMN IF NOT EXISTS product_owner BOOLEAN NOT NULL DEFAULT false;`);
   // Historique : chaque version enregistrée d'un document, avec son auteur (consultable, restaurable).
   await pool.query(`
     CREATE TABLE IF NOT EXISTS document_versions (

@@ -33,6 +33,16 @@ export interface BacklogItemInput {
   wbsCode: string | null;
   /** Ressource du référentiel (identifiant). */
   assigneeId: string | null;
+  /** Qui a accepté l'élément (Product Owner), une fois terminé ; posé par sa décision. */
+  acceptedBy: { id: string | null; name: string } | null;
+  /** Dernier refus du Product Owner : motif, auteur, date ; posé par sa décision. */
+  refusal: { reason: string; by: string; on: string } | null;
+}
+
+/** Décision du Product Owner sur un élément : accepter (en revue) ou refuser (motif obligatoire). */
+export interface BacklogDecisionInput {
+  decision: 'ACCEPT' | 'REJECT';
+  comment: string | null;
 }
 
 export interface IterationInput {
@@ -114,4 +124,6 @@ export interface ProductBacklogDto extends ProductBacklogInput {
   references: { requirements: Record<string, string>; workPackages: Record<string, string> };
   /** Définition de « terminé », rédigée dans le plan de management (approche de développement). */
   definitionOfDone: string;
+  /** Product Owner désigné dans l'équipe du projet ; `null` : le chef de projet décide. */
+  productOwner: { id: string; name: string } | null;
 }

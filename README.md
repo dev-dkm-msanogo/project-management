@@ -219,6 +219,13 @@ pour la DSI de Dakar Mobilité. Interface en français, montants en **FCFA**.
   « terminé » est celle du plan de management. **Lien hybride** : un élément rattaché à un lot de la
   WBS en fait avancer le travail (points terminés sur points estimés) ; le lot ne se saisit plus à la
   main et la valeur acquise, le portefeuille, les livrables et le rapport de clôture en tiennent compte.
+- **Product Owner** : désigné dans l'équipe du projet (un membre qui rédige, un seul par projet). Il
+  ordonne et priorise le carnet, rédige les éléments, les accepte (un élément en revue devient terminé à
+  la date du jour, signé de son nom) ou les refuse (motif obligatoire, l'élément repart en cours) ; il
+  peut rouvrir un élément accepté. L'équipe propose des éléments (ajoutés en fin de carnet), estime et
+  fait avancer le travail jusqu'à la revue. Sans Product Owner désigné, le chef de projet décide. Le
+  serveur contrôle chaque enregistrement du carnet au regard de ces droits (403 sinon) ; les décisions
+  passent par `POST /projects/:id/backlog/:code/decision` et figurent au journal d'audit.
 - **Registre des modifications** (templates « Change Log », « Change Request » et « Change Request
   Assessment », processus 39) : chaque demande porte ses catégories, sa description, sa
   justification, ses impacts par domaine (périmètre, qualité, exigences, coût, délai), le risque pour

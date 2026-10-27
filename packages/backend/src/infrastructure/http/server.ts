@@ -6,7 +6,7 @@ import { contentRoleOf } from '@domain/value-objects/project-role';
 import { canAdminister } from '@domain/value-objects/role';
 import { adminRoutes } from '@infrastructure/adapters/in/http/admin.routes';
 import { approvalRoutes } from '@infrastructure/adapters/in/http/approval.routes';
-import { registerAuth } from '@infrastructure/adapters/in/http/auth/auth-plugin';
+import { registerAuth, requireEditor } from '@infrastructure/adapters/in/http/auth/auth-plugin';
 import { authRoutes } from '@infrastructure/adapters/in/http/auth/auth.routes';
 import { registerErrorHandler } from '@infrastructure/adapters/in/http/error-handler';
 import { registerAuditTrail } from '@infrastructure/adapters/in/http/audit-trail';
@@ -70,7 +70,11 @@ import {
   saveDeliverablesBodySchema,
   saveTeamAssessmentBodySchema,
 } from '@infrastructure/adapters/in/http/schemas/save-closing-documents.schema';
-import { saveProductBacklogBodySchema } from '@infrastructure/adapters/in/http/schemas/save-product-backlog.schema';
+import {
+  backlogDecisionBodySchema,
+  backlogDecisionParamsSchema,
+  saveProductBacklogBodySchema,
+} from '@infrastructure/adapters/in/http/schemas/save-product-backlog.schema';
 import { saveChangeLogBodySchema } from '@infrastructure/adapters/in/http/schemas/save-change-log.schema';
 import { saveProjectManagementPlanBodySchema } from '@infrastructure/adapters/in/http/schemas/save-project-management-plan.schema';
 import { saveCostEstimatesBodySchema } from '@infrastructure/adapters/in/http/schemas/save-cost-estimates.schema';
@@ -506,6 +510,18 @@ export async function buildServer(
       save: container.saveProductBacklog,
     }),
   );
+  // Décision du Product Owner sur un élément du carnet : accepter ou refuser.
+  app.post('/api/v1/projects/:projectId/backlog/:code/decision', { preHandler: requireEditor }, async (request) => {
+    const { projectId, code } = backlogDecisionParamsSchema.parse(request.params);
+    const { decision, comment } = backlogDecisionBodySchema.parse(request.body);
+    return container.decideBacklogItem.execute({
+      projectId,
+      code,
+      decision,
+      comment,
+      actor: { id: request.user.id, projectRole: request.projectRole },
+    });
+  });
   await app.register(
     documentRoutes({
       segment: 'schedule-model',

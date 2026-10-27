@@ -1,7 +1,7 @@
 import type { FastifyPluginAsync } from 'fastify';
 import type { ZodType } from 'zod';
 import type { ListDocumentVersionsUseCase } from '@application/ports/in/governance.use-cases';
-import type { DeleteProjectDocumentUseCase } from '@application/ports/in/project-document.use-cases';
+import type { DeleteProjectDocumentUseCase, DocumentActor } from '@application/ports/in/project-document.use-cases';
 import type { DocumentTable } from '@infrastructure/adapters/out/persistence/postgres/postgres-document.repository';
 import { requireEditor } from '@infrastructure/adapters/in/http/auth/auth-plugin';
 import {
@@ -20,7 +20,7 @@ export type ProjectDocumentRouteOptions<Input, Dto> = {
 } & (
   | {
       bodySchema: ZodType<Input>;
-      save: { execute(command: { projectId: string; input: Input }): Promise<Dto> };
+      save: { execute(command: { projectId: string; input: Input; actor?: DocumentActor }): Promise<Dto> };
       /** Table du document : sa version circule en ETag / If-Match (concurrence optimiste). */
       table: DocumentTable;
       /** Suppression du document entier (documents rédigés ; un registre se vide entrée par entrée). */
@@ -56,7 +56,7 @@ export function projectDocumentRoutes<Input, Dto>(
       const { projectId } = getExecutiveReportParamsSchema.parse(request.params);
       const input = bodySchema.parse(request.body);
       const { result, version } = await withDocumentScope(table, expectedVersionOf(request), () =>
-        save.execute({ projectId, input }),
+        save.execute({ projectId, input, actor: { id: request.user.id, projectRole: request.projectRole } }),
       );
       sendVersion(reply, version);
       return reply.status(200).send(result);
