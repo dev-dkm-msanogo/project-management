@@ -5,9 +5,11 @@ import {
   businessCaseApi,
   changeLogApi,
   charterApi,
+  closureReportApi,
   communicationPlanApi,
   costBaselineApi,
   costEstimatesApi,
+  deliverablesApi,
   engagementPlanApi,
   fundingRequirementsApi,
   fundingStrategyApi,
@@ -33,6 +35,7 @@ import {
   stakeholderMappingApi,
   stakeholderQuestionnaireApi,
   stakeholderRegisterApi,
+  teamApi,
   teamCharterApi,
   wbsDictionaryApi,
 } from '@/api/project-documents';
@@ -132,3 +135,11 @@ export const useQualityReport = (projectId: string) => useProjectResource(projec
 export const useQualityAnalyses = (projectId: string) => useProjectResource(projectId, qualityAnalysesApi.fetchOptional);
 
 export const useWbsDictionary = (projectId: string) => useProjectResource(projectId, wbsDictionaryApi.fetch);
+
+/** Livrables : relus dans la WBS et son dictionnaire, même sans suivi consigné. */
+export const useDeliverables = (projectId: string) => useProjectResource(projectId, deliverablesApi.fetch);
+
+/** Équipe : relue dans le projet, même sans évaluation. */
+export const useTeam = (projectId: string) => useProjectResource(projectId, teamApi.fetch);
+
+export const useClosureReport = (projectId: string) => useProjectResource(projectId, closureReportApi.fetchOptional);

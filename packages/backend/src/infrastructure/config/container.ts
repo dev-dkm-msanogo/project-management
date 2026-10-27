@@ -126,7 +126,27 @@ import {
   wbsCitedByDictionary,
   wbsCitedByProgress,
   wbsCitedByScheduleModel,
+  changesCitedByDeliverables,
+  wbsCitedByDeliverables,
 } from '@application/use-cases/citations';
+import type { ClosureReport } from '@domain/entities/closure-report';
+import { DeliverablesRegister } from '@domain/entities/deliverables-register';
+import { TeamAssessment } from '@domain/entities/team-assessment';
+import { closureReportToInput, inputToClosureReport } from '@application/mappers/closure-report.mappers';
+import { deliverablesToInput, inputToDeliverables } from '@application/mappers/deliverables.mappers';
+import { inputToTeamAssessment, teamAssessmentToInput } from '@application/mappers/team.mappers';
+import { closureReportServices } from '@application/use-cases/closure-report.services';
+import { deliverablesServices } from '@application/use-cases/deliverables.services';
+import { loadOrEmpty } from '@application/use-cases/load-or-empty';
+import { teamServices } from '@application/use-cases/team.services';
+import type {
+  ClosureReportDto,
+  ClosureReportInput,
+  DeliverablesDto,
+  DeliverablesInput,
+  TeamAssessmentInput,
+  TeamDto,
+} from '@shared/index';
 import { scopeStatementReader } from '@application/use-cases/scope-statement.reader';
 import { costEstimatesReader, GetCostBaselineService } from '@application/use-cases/cost.services';
 import { resourcePlanReader } from '@application/use-cases/resource-plan.reader';
@@ -529,7 +549,9 @@ type RemovableDocument =
   | 'stakeholderMappings'
   | 'qualityMetrics'
   | 'qualityReports'
-  | 'qualityAnalyses';
+  | 'qualityAnalyses'
+  | 'teamAssessments'
+  | 'closureReports';
 
 export interface AppContainer {
   login: LoginUseCase;
@@ -620,6 +642,12 @@ export interface AppContainer {
   getFundingRequirements: GetProjectDocumentUseCase<FundingRequirementsDto>;
   getActualCosts: GetProjectDocumentUseCase<ActualCostsDto>;
   saveActualCosts: SaveProjectDocumentUseCase<ActualCostsInput, ActualCostsDto>;
+  getDeliverables: GetProjectDocumentUseCase<DeliverablesDto>;
+  saveDeliverables: SaveProjectDocumentUseCase<DeliverablesInput, DeliverablesDto>;
+  getTeam: GetProjectDocumentUseCase<TeamDto>;
+  saveTeam: SaveProjectDocumentUseCase<TeamAssessmentInput, TeamDto>;
+  getClosureReport: GetProjectDocumentUseCase<ClosureReportDto>;
+  saveClosureReport: SaveProjectDocumentUseCase<ClosureReportInput, ClosureReportDto>;
   updateTaskProgress: UpdateTaskProgressUseCase;
   getMyTasks: GetMyTasksUseCase;
   getEarnedValue: GetEarnedValueUseCase;
@@ -689,6 +717,9 @@ interface Repositories {
   qualityAnalyses: ProjectDocumentRepository<QualityAnalyses>;
   fundingStrategies: ProjectDocumentRepository<FundingStrategy>;
   actualCosts: ProjectDocumentRepository<ActualCosts>;
+  deliverables: ProjectDocumentRepository<DeliverablesRegister>;
+  teamAssessments: ProjectDocumentRepository<TeamAssessment>;
+  closureReports: ProjectDocumentRepository<ClosureReport>;
   taskProgress: TaskProgressRepository;
   resourceDirectory: ResourceDirectoryRepository;
   approvals: ApprovalRepository;
@@ -746,6 +777,15 @@ function peopleRules(repos: Repositories) {
     communicationPlans: rule('plan de management des communications', repos.communicationPlans, ({ props }) =>
       props.communications.map((item, index) => ({ id: item.senderId, role: `émetteur de la communication n° ${index + 1}` })),
     ),
+    deliverables: rule('registre des livrables', repos.deliverables, (register) =>
+      register.records.flatMap(({ props }) => [
+        { id: props.verification?.verifiedById ?? null, role: `vérificateur du livrable ${props.wbsCode}` },
+        { id: props.acceptance?.decidedById ?? null, role: `décideur du livrable ${props.wbsCode}` },
+      ]),
+    ),
+    closureReports: rule('rapport de clôture', repos.closureReports, ({ props }) =>
+      props.acceptances.map((item, index) => ({ id: item.resourceId, role: `acceptation n° ${index + 1} de la transition` })),
+    ),
     changeLogs: rule('registre des modifications', repos.changeLogs, (log) =>
       log.requests.map((request) => ({ id: request.props.assessment?.assessedById ?? null, role: `évaluateur de ${request.code}` })),
     ),
@@ -781,6 +821,7 @@ function lockedRepositories(repos: Repositories) {
     businessCases: lock(repos.businessCases, 'BUSINESS_CASE', businessCaseToInput),
     charters: lock(repos.charters, 'CHARTER', charterToInput),
     benefitsPlans: lock(repos.benefitsPlans, 'BENEFITS_PLAN', benefitsPlanToInput),
+    closureReports: lock(repos.closureReports, 'CLOSURE_REPORT', closureReportToInput),
     requirements: lock(repos.requirements, 'REQUIREMENTS', (register) =>
       requirementsRegisterToInput(register).requirements.map(
         ({ status: _status, validation: _validation, ...content }) => content,
@@ -874,6 +915,18 @@ function approvalUseCases(
           : ['au moins une exigence au registre'],
       snapshot: (projectId) => documentsOf(projectId, { requirements: readOrSkip(useCases.getRequirementsRegister) }),
     },
+    CLOSURE_REPORT: {
+      missingForSubmission: async (projectId) =>
+        (await repos.closureReports.findByProjectId(projectId))?.missingForSubmission ?? ['le rapport de clôture rédigé'],
+      // Rapport approuvé : le projet est clos.
+      archive: async (projectId) => {
+        const project = await repos.projects.findById(projectId);
+        if (project) {
+          await repos.projects.save(project.withDetails({ name: project.name, description: project.description, status: 'CLOSED' }));
+        }
+      },
+      snapshot: (projectId) => documentsOf(projectId, { 'closure-report': readOrSkip(useCases.getClosureReport) }),
+    },
     PROJECT_MANAGEMENT_PLAN: {
       missingForSubmission: async (projectId) => [
         ...(await written(repos.projectManagementPlans, projectId, 'le plan de management rédigé')),
@@ -962,6 +1015,7 @@ function wireUseCases(repos: Repositories, hasher: PasswordHasher): AppContainer
   );
   const changeGuard = referenceGuard(repos.changeLogs, (log) => log.requests.map((request) => request.code), [
     changesCitedByIssues(repos.issueLogs),
+    changesCitedByDeliverables(repos.deliverables),
   ]);
   const metricGuard = referenceGuard(repos.qualityMetrics, (metrics) => metrics.props.metrics.map((metric) => metric.code), [
     metricsCitedByQualityReport(repos.qualityReports),
@@ -971,6 +1025,7 @@ function wireUseCases(repos: Repositories, hasher: PasswordHasher): AppContainer
     wbsCitedByDictionary(repos.wbsDictionaries),
     wbsCitedByActualCosts(repos.actualCosts),
     wbsCitedByProgress(repos.taskProgress),
+    wbsCitedByDeliverables(repos.deliverables),
   ]);
   // Personnes choisies dans le référentiel ; circuit de validation : une version soumise ou
   // approuvée est figée (le suivi reste libre).
@@ -994,6 +1049,33 @@ function wireUseCases(repos: Repositories, hasher: PasswordHasher): AppContainer
     progress: repos.taskProgress,
     actualCosts: repos.actualCosts,
   };
+  const earnedValue = new GetEarnedValueService(performance, clock);
+  // Livrables, équipe et clôture : relus dans la WBS, son avancement et les documents du projet.
+  const deliverables = deliverablesServices({
+    plans: repos.plans,
+    planDto,
+    dictionaries: repos.wbsDictionaries,
+    changeLogs: repos.changeLogs,
+  });
+  const team = teamServices({
+    plans: repos.plans,
+    planDto,
+    charters: repos.charters,
+    resourcePlans: repos.resourcePlans,
+    responsibilityMatrices: repos.responsibilityMatrices,
+  });
+  const closure = closureReportServices({
+    plans: repos.plans,
+    planDto,
+    baselines: repos.baselines,
+    earnedValue,
+    deliverables: async (projectId) =>
+      deliverables.toDto(await loadOrEmpty(repos.deliverables, projectId, DeliverablesRegister.empty)),
+    risks: repos.risks,
+    issueLogs: repos.issueLogs,
+    benefitsPlans: repos.benefitsPlans,
+    lessonsLearned: repos.lessonsLearned,
+  });
   // Rapport exécutif alimenté par les éléments du projet, calculés à sa date.
   const reportDto = executiveReportReader({
     ...performance,
@@ -1082,6 +1164,9 @@ function wireUseCases(repos: Repositories, hasher: PasswordHasher): AppContainer
       repos.qualityAnalyses,
       repos.fundingStrategies,
       repos.actualCosts,
+      repos.deliverables,
+      repos.teamAssessments,
+      repos.closureReports,
       repos.taskProgress,
       repos.approvals,
       repos.approvalSnapshots,
@@ -1363,6 +1448,26 @@ function wireUseCases(repos: Repositories, hasher: PasswordHasher): AppContainer
       toDto: costs.toDto,
       beforeSave: costs.beforeSave,
     }),
+    getDeliverables: new GetProjectRegisterService(repos.deliverables, deliverables.toDto, DeliverablesRegister.empty),
+    saveDeliverables: new SaveProjectDocumentService(checked.deliverables, {
+      fromInput: inputToDeliverables,
+      toDto: deliverables.toDto,
+      beforeSave: deliverables.beforeSave,
+    }),
+    getTeam: new GetProjectRegisterService(repos.teamAssessments, team.toDto, TeamAssessment.empty),
+    saveTeam: new SaveProjectDocumentService(repos.teamAssessments, {
+      fromInput: inputToTeamAssessment,
+      toDto: team.toDto,
+    }),
+    getClosureReport: new GetProjectDocumentService(
+      repos.closureReports,
+      closure.toDto,
+      (projectId) => new DocumentNotFoundError(`Aucun rapport de clôture pour le projet "${projectId}".`),
+    ),
+    saveClosureReport: new SaveProjectDocumentService(locked.closureReports, {
+      fromInput: inputToClosureReport,
+      toDto: closure.toDto,
+    }),
     updateTaskProgress: new UpdateTaskProgressService(
       repos.plans,
       repos.taskProgress,
@@ -1371,7 +1476,7 @@ function wireUseCases(repos: Repositories, hasher: PasswordHasher): AppContainer
       clock,
     ),
     getMyTasks: new GetMyTasksService(access, repos.plans, repos.taskProgress, repos.resourceDirectory, clock),
-    getEarnedValue: new GetEarnedValueService(performance, clock),
+    getEarnedValue: earnedValue,
     getPortfolio: new GetPortfolioService(
       {
         ...performance,
@@ -1407,6 +1512,8 @@ function wireUseCases(repos: Repositories, hasher: PasswordHasher): AppContainer
       qualityMetrics: new DeleteProjectDocumentService(repos.qualityMetrics, metricGuard.beforeDelete),
       qualityReports: new DeleteProjectDocumentService(repos.qualityReports),
       qualityAnalyses: new DeleteProjectDocumentService(repos.qualityAnalyses),
+      teamAssessments: new DeleteProjectDocumentService(repos.teamAssessments),
+      closureReports: new DeleteProjectDocumentService(locked.closureReports),
     },
     projectAccess: access,
     listDocumentVersions: new ListDocumentVersionsService(repos.versionLog, repos.users),
@@ -1722,6 +1829,18 @@ export async function buildContainer(env: AppEnv): Promise<AppContainer> {
         toInput: actualCostsToInput,
         fromInput: inputToActualCosts,
       }),
+      deliverables: new PostgresDocumentRepository(pool, 'deliverables_registers', {
+        toInput: deliverablesToInput,
+        fromInput: inputToDeliverables,
+      }),
+      teamAssessments: new PostgresDocumentRepository(pool, 'team_assessments', {
+        toInput: teamAssessmentToInput,
+        fromInput: inputToTeamAssessment,
+      }),
+      closureReports: new PostgresDocumentRepository(pool, 'closure_reports', {
+        toInput: closureReportToInput,
+        fromInput: inputToClosureReport,
+      }),
       taskProgress: new PostgresTaskProgressRepository(pool),
       resourceDirectory: new PostgresResourceDirectoryRepository(pool),
       approvals: new PostgresApprovalRepository(pool),
@@ -1776,6 +1895,9 @@ export async function buildContainer(env: AppEnv): Promise<AppContainer> {
     qualityAnalyses: new InMemoryProjectDocumentRepository([buildProjectAlphaQualityAnalyses()]),
     fundingStrategies: new InMemoryProjectDocumentRepository([buildProjectAlphaFundingStrategy()]),
     actualCosts: new InMemoryProjectDocumentRepository([buildProjectAlphaActualCosts()]),
+    deliverables: new InMemoryProjectDocumentRepository<DeliverablesRegister>([]),
+    teamAssessments: new InMemoryProjectDocumentRepository<TeamAssessment>([]),
+    closureReports: new InMemoryProjectDocumentRepository<ClosureReport>([]),
     taskProgress: new InMemoryTaskProgressRepository(buildProjectAlphaTaskProgress()),
     resourceDirectory: new InMemoryResourceDirectoryRepository(buildResourceDirectory()),
     approvals: new InMemoryApprovalRepository(buildProjectAlphaApprovals()),

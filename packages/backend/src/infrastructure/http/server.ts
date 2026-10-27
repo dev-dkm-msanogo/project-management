@@ -65,6 +65,11 @@ import {
 } from '@infrastructure/adapters/in/http/schemas/save-quality-tools.schema';
 import { saveFundingStrategyBodySchema } from '@infrastructure/adapters/in/http/schemas/save-funding.schema';
 import { saveIssueLogBodySchema } from '@infrastructure/adapters/in/http/schemas/save-issue-log.schema';
+import {
+  saveClosureReportBodySchema,
+  saveDeliverablesBodySchema,
+  saveTeamAssessmentBodySchema,
+} from '@infrastructure/adapters/in/http/schemas/save-closing-documents.schema';
 import { saveChangeLogBodySchema } from '@infrastructure/adapters/in/http/schemas/save-change-log.schema';
 import { saveProjectManagementPlanBodySchema } from '@infrastructure/adapters/in/http/schemas/save-project-management-plan.schema';
 import { saveCostEstimatesBodySchema } from '@infrastructure/adapters/in/http/schemas/save-cost-estimates.schema';
@@ -460,6 +465,35 @@ export async function buildServer(
       bodySchema: saveLessonsLearnedBodySchema,
       get: container.getLessonsLearned,
       save: container.saveLessonsLearned,
+    }),
+  );
+  await app.register(
+    documentRoutes({
+      segment: 'deliverables',
+      table: 'deliverables_registers',
+      bodySchema: saveDeliverablesBodySchema,
+      get: container.getDeliverables,
+      save: container.saveDeliverables,
+    }),
+  );
+  await app.register(
+    documentRoutes({
+      segment: 'team',
+      table: 'team_assessments',
+      remove: container.deleteDocument.teamAssessments,
+      bodySchema: saveTeamAssessmentBodySchema,
+      get: container.getTeam,
+      save: container.saveTeam,
+    }),
+  );
+  await app.register(
+    documentRoutes({
+      segment: 'closure-report',
+      table: 'closure_reports',
+      remove: container.deleteDocument.closureReports,
+      bodySchema: saveClosureReportBodySchema,
+      get: container.getClosureReport,
+      save: container.saveClosureReport,
     }),
   );
   await app.register(

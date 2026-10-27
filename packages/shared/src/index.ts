@@ -30,3 +30,6 @@ export * from './contracts/funding';
 export * from './contracts/performance';
 export * from './contracts/approvals';
 export * from './contracts/governance';
+export * from './contracts/deliverables';
+export * from './contracts/team';
+export * from './contracts/closure-report';

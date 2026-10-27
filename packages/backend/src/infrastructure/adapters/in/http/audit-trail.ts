@@ -44,6 +44,9 @@ const DOCUMENTS: Record<string, string> = {
   'quality-metrics': 'Métriques qualité',
   'quality-report': 'Rapport qualité',
   'quality-analyses': "Outils d'analyse qualité",
+  deliverables: 'Livrables',
+  team: "Évaluation de l'équipe",
+  'closure-report': 'Rapport de clôture',
 };
 
 const APPROVAL_SUBJECTS: Record<string, string> = {
@@ -52,6 +55,7 @@ const APPROVAL_SUBJECTS: Record<string, string> = {
   BENEFITS_PLAN: 'Plan de gestion des bénéfices',
   PROJECT_MANAGEMENT_PLAN: 'Plan de management du projet',
   REQUIREMENTS: 'Registre des exigences',
+  CLOSURE_REPORT: 'Rapport de clôture',
 };
 
 const APPROVAL_ACTIONS: Record<string, string> = {

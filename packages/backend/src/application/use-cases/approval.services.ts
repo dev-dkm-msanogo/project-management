@@ -38,6 +38,7 @@ export const SUBJECT_NAMES: Record<ApprovalSubject, string> = {
   BENEFITS_PLAN: 'le plan de gestion des bénéfices',
   PROJECT_MANAGEMENT_PLAN: 'le plan de management du projet',
   REQUIREMENTS: 'le registre des exigences',
+  CLOSURE_REPORT: 'le rapport de clôture',
 };
 
 /** Ce que le circuit sait de chaque document validé, fourni par la racine de composition. */

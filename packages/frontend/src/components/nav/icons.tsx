@@ -66,15 +66,6 @@ export function IconRisk() {
   );
 }
 
-/** Output pas encore outillé (cercle en pointillés). */
-export function IconPlanned() {
-  return (
-    <svg {...BASE} strokeDasharray="3 3">
-      <circle cx="12" cy="12" r="8" />
-    </svg>
-  );
-}
-
 export function IconChevron() {
   return (
     <svg {...BASE} width={14} height={14}>
@@ -630,6 +621,36 @@ export function IconEarnedValue() {
       <path d="M5 17c4-1 7-5 14-11" />
       <path d="M5 18c4 0 8-3 11-6" strokeDasharray="2 2.5" />
       <circle cx="16" cy="12" r="1.5" />
+    </svg>
+  );
+}
+
+export function IconDeliverables() {
+  return (
+    <svg {...BASE}>
+      <path d="M21 8 12 3 3 8v8l9 5 9-5z" />
+      <path d="m3 8 9 5 9-5M12 13v8" />
+      <path d="m8.5 15.5 1.5 1.5 3-3" />
+    </svg>
+  );
+}
+
+export function IconTeam() {
+  return (
+    <svg {...BASE}>
+      <circle cx="12" cy="7" r="3" />
+      <circle cx="5" cy="10" r="2.2" />
+      <circle cx="19" cy="10" r="2.2" />
+      <path d="M7 20c.5-3.2 2.4-5 5-5s4.5 1.8 5 5M1.8 18c.3-2 1.5-3.2 3.2-3.2M22.2 18c-.3-2-1.5-3.2-3.2-3.2" />
+    </svg>
+  );
+}
+
+export function IconClosure() {
+  return (
+    <svg {...BASE}>
+      <path d="M5 21V4" />
+      <path d="M5 4h11l-2 4 2 4H5" />
     </svg>
   );
 }

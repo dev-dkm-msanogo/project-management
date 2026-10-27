@@ -8,6 +8,7 @@ export const APPROVAL_SUBJECTS = [
   'BENEFITS_PLAN',
   'PROJECT_MANAGEMENT_PLAN',
   'REQUIREMENTS',
+  'CLOSURE_REPORT',
 ] as const;
 export type ApprovalSubject = (typeof APPROVAL_SUBJECTS)[number];
 

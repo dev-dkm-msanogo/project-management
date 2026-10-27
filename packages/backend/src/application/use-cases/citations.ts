@@ -1,4 +1,5 @@
 import type { ActualCosts } from '@domain/entities/actual-costs';
+import type { DeliverablesRegister } from '@domain/entities/deliverables-register';
 import type { IssueLog } from '@domain/entities/issue-log';
 import type { QualityReport } from '@domain/entities/quality-report';
 import type { ScheduleModel } from '@domain/entities/schedule-model';
@@ -87,4 +88,18 @@ export const wbsCitedByProgress =
   async (projectId) =>
     (await progress.listByProject(projectId)).flatMap((measure) =>
       measure.started ? cite(measure.wbs, "l'avancement des tâches") : [],
+    );
+
+export const wbsCitedByDeliverables =
+  (deliverables: ProjectDocumentRepository<DeliverablesRegister>): CitationSource =>
+  async (projectId) =>
+    ((await deliverables.findByProjectId(projectId))?.records ?? []).flatMap((record) =>
+      cite(record.wbsCode, 'le registre des livrables'),
+    );
+
+export const changesCitedByDeliverables =
+  (deliverables: ProjectDocumentRepository<DeliverablesRegister>): CitationSource =>
+  async (projectId) =>
+    ((await deliverables.findByProjectId(projectId))?.records ?? []).flatMap((record) =>
+      cite(record.props.acceptance?.changeCode ?? null, 'le registre des livrables', `livrable ${record.wbsCode}`),
     );

@@ -54,6 +54,9 @@ import { StakeholderFeature } from '@/features/StakeholderFeature';
 import { StakeholderMappingFeature } from '@/features/StakeholderMappingFeature';
 import { StakeholderQuestionnaireFeature } from '@/features/StakeholderQuestionnaireFeature';
 import { TeamCharterFeature } from '@/features/TeamCharterFeature';
+import { TeamFeature } from '@/features/TeamFeature';
+import { DeliverablesFeature } from '@/features/DeliverablesFeature';
+import { ClosureReportFeature } from '@/features/ClosureReportFeature';
 import { UsersFeature } from '@/features/UsersFeature';
 import { WbsDictionaryFeature } from '@/features/WbsDictionaryFeature';
 import { WbsFeature } from '@/features/WbsFeature';
@@ -252,6 +255,11 @@ function AuthenticatedApp() {
               {view === 'task-progress' && <TaskProgressFeature projectId={projectId} onNavigate={navigate} />}
               {view === 'actual-costs' && <ActualCostsFeature projectId={projectId} />}
               {view === 'earned-value' && <EarnedValueFeature projectId={projectId} onNavigate={navigate} />}
+              {view === 'deliverables' && <DeliverablesFeature projectId={projectId} onNavigate={navigate} />}
+              {view === 'team' && <TeamFeature projectId={projectId} onNavigate={navigate} />}
+              {view === 'closure-report' && (
+                <ClosureReportFeature projectId={projectId} projectName={projectName} onNavigate={navigate} />
+              )}
             </main>
           </ProjectRightsScope>
         </PageActionsSlot.Provider>

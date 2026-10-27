@@ -5,7 +5,13 @@
  */
 
 /** Documents soumis à validation ; le plan de management est validé avec ses plans et références. */
-export type ApprovalSubject = 'BUSINESS_CASE' | 'CHARTER' | 'BENEFITS_PLAN' | 'PROJECT_MANAGEMENT_PLAN' | 'REQUIREMENTS';
+export type ApprovalSubject =
+  | 'BUSINESS_CASE'
+  | 'CHARTER'
+  | 'BENEFITS_PLAN'
+  | 'PROJECT_MANAGEMENT_PLAN'
+  | 'REQUIREMENTS'
+  | 'CLOSURE_REPORT';
 
 export const APPROVAL_SUBJECTS: readonly ApprovalSubject[] = [
   'BUSINESS_CASE',
@@ -13,6 +19,7 @@ export const APPROVAL_SUBJECTS: readonly ApprovalSubject[] = [
   'BENEFITS_PLAN',
   'PROJECT_MANAGEMENT_PLAN',
   'REQUIREMENTS',
+  'CLOSURE_REPORT',
 ];
 
 /** Brouillon (modifiable) → soumis (figé, en attente) → approuvé (figé, référence). */

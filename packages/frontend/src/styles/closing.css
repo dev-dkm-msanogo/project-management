@@ -1,0 +1,95 @@
+/* ---------------------------------------------------------------------------
+   Livrables, équipe et rapport de clôture.
+--------------------------------------------------------------------------- */
+
+.register-table--deliverables {
+  min-width: 980px;
+}
+
+.register-table--deliverables .register-table__title .register-table__muted {
+  font-weight: 400;
+}
+
+.register-table--deliverables td .status-badge {
+  white-space: nowrap;
+}
+
+.register-table--deliverables .ref-link {
+  margin: 4px 0 0;
+}
+
+/* Avancement de production du livrable : barre fine. */
+.deliverable-progress {
+  width: 72px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.deliverable-progress span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--rag-green);
+}
+
+.register-table--team {
+  min-width: 860px;
+}
+
+.team-tasks {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.team-tasks .register-table__code {
+  margin-right: 4px;
+}
+
+.team-tasks__late .register-table__muted {
+  color: var(--rag-red-text);
+}
+
+/* Critères de l'évaluation de l'équipe : libellé, note puis commentaire. */
+.team-ratings {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 12px;
+}
+
+.team-ratings > div {
+  display: grid;
+  grid-template-columns: minmax(140px, 200px) 1fr;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.team-ratings dt {
+  font-weight: 600;
+}
+
+.team-ratings dd {
+  margin: 0;
+}
+
+.team-ratings dd .doc-text {
+  margin: 6px 0 0;
+}
+
+.doc-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+@media (max-width: 640px) {
+  .team-ratings > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}

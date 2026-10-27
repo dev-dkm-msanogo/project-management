@@ -182,6 +182,27 @@ pour la DSI de Dakar Mobilité. Interface en français, montants en **FCFA**.
   commentaires ; lien facultatif vers le risque concrétisé et la demande de modification, vérifiés
   dans leurs registres (intitulés relus à chaque lecture). Synthèse : à traiter, prioritaires,
   escaladés, résolus, délai moyen de résolution ; onglets « À traiter » et « Résolus ».
+- **Livrables** (processus 27, alimenté par 32) : les éléments de la WBS dont la fiche du dictionnaire
+  nomme un livrable clé, avec leurs critères d'acceptation, leur fin prévue et leur avancement relus
+  dans la WBS ; le registre consigne la vérification (date, vérificateur, contrôles) puis la décision
+  d'acceptation (acceptée ou refusée, datée, par une ressource du référentiel ; motif obligatoire pour
+  un refus, demande de modification facultative vérifiée dans son registre). On ne décide que sur un
+  livrable vérifié, jamais avant sa vérification. Étapes : prévu, en production, à vérifier, en
+  attente d'acceptation, accepté, refusé. Un élément de la WBS ou une demande cités ne se retirent pas.
+- **Équipe et affectations** (processus 22, alimenté par 23) : l'équipe relue dans le projet, jamais
+  ressaisie — chef de projet et sponsor (charte), rôles (plan des ressources, RACI), tâches affectées
+  dans la WBS avec leur avancement, période d'affectation, charge et retards. Évaluation de la
+  performance de l'équipe (template « Team Performance Assessment ») : neuf critères notés et commentés
+  (périmètre, qualité, délais, coûts, communication, collaboration, conflits, décision, moral), axes de
+  progression ; évaluations successives dans l'historique des versions. Pas d'évaluation individuelle
+  (donnée RH personnelle, hors de l'outil projet).
+- **Rapport de clôture** (templates « Final Report » et « Final Product / Service / Result
+  Transition », processus 40) : description, bilan des objectifs, écarts de délai et de coût (relus :
+  fin de la référence, fin réelle ou prévue, coût réel, budget, estimation à l'achèvement, réserves),
+  bénéfices à la clôture (repris du plan de gestion des bénéfices), risques et problèmes encore ouverts
+  et leur disposition, livrables acceptés, leçons apprises ; transition vers l'exploitation
+  (destinataires, éléments remis, formations, support, éléments reportés) et son acceptation datée.
+  Soumis au circuit de validation : la version approuvée fige ces faits et **clôt le projet**.
 - **Registre des modifications** (templates « Change Log », « Change Request » et « Change Request
   Assessment », processus 39) : chaque demande porte ses catégories, sa description, sa
   justification, ses impacts par domaine (périmètre, qualité, exigences, coût, délai), le risque pour
@@ -248,7 +269,8 @@ pour la DSI de Dakar Mobilité. Interface en français, montants en **FCFA**.
 - **Circuit de validation** : le business case, la charte, le plan de gestion des bénéfices, le
   registre des exigences et le plan de management du projet (validé avec ses plans de gestion et ses
   références de base : énoncé du périmètre, WBS et dictionnaire, modèle d'ordonnancement, estimations
-  des coûts, stratégie de financement) passent par brouillon → soumis → approuvé. Le chef de projet
+  des coûts, stratégie de financement), ainsi que le rapport de clôture (dont l'approbation clôt le
+  projet), passent par brouillon → soumis → approuvé. Le chef de projet
   (éditeur) soumet, retire sa soumission ou ouvre la révision suivante ; un valideur désigné pour le
   projet par un administrateur (même un compte en lecture seule) approuve ou rejette (motif d'au
   moins 10 caractères), jamais sa propre soumission. Une version soumise ou approuvée est figée côté

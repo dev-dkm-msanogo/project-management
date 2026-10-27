@@ -16,6 +16,7 @@ export const SUBJECT_LABELS: Record<ApprovalSubject, string> = {
   BENEFITS_PLAN: 'Plan de gestion des bénéfices',
   PROJECT_MANAGEMENT_PLAN: 'Plan de management du projet',
   REQUIREMENTS: 'Registre des exigences',
+  CLOSURE_REPORT: 'Rapport de clôture',
 };
 
 /** Ce que couvre la validation de chaque document. */
@@ -26,6 +27,7 @@ export const SUBJECT_SCOPES: Record<ApprovalSubject, string> = {
   PROJECT_MANAGEMENT_PLAN:
     'Avec ses plans de gestion et ses références de base : périmètre (énoncé, WBS, dictionnaire), échéancier, coûts et financement.',
   REQUIREMENTS: 'Exigences validées par le métier avant le développement ; leur avancement reste libre.',
+  CLOSURE_REPORT: 'Bilan et transition acceptés : son approbation clôt le projet.',
 };
 
 export const SUBJECT_VIEWS: Record<ApprovalSubject, AppView> = {
@@ -34,6 +36,7 @@ export const SUBJECT_VIEWS: Record<ApprovalSubject, AppView> = {
   BENEFITS_PLAN: 'benefits',
   PROJECT_MANAGEMENT_PLAN: 'project-management-plan',
   REQUIREMENTS: 'requirements',
+  CLOSURE_REPORT: 'closure-report',
 };
 
 export const APPROVAL_STATUS_LABELS: Record<ApprovalStatus, string> = {

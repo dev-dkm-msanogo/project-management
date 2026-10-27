@@ -238,27 +238,6 @@
   font-size: 0.83rem;
 }
 
-/* Output pas encore outillé : visible pour la feuille de route, non cliquable. */
-.nav-item--planned,
-.nav-item--planned:hover {
-  background: transparent;
-  color: var(--rag-grey);
-  cursor: default;
-  font-weight: 500;
-}
-
-/* Légende des modules à venir, en pied de menu. */
-.nav-legend {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: auto;
-  padding: 10px 10px 2px;
-  border-top: 1px solid var(--border);
-  font-size: 0.7rem;
-  color: var(--text-muted);
-}
-
 /* Texte réservé aux lecteurs d'écran. */
 .visually-hidden {
   position: absolute;

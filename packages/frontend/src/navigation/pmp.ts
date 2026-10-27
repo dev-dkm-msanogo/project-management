@@ -68,7 +68,10 @@ export type AppView =
   | 'risks'
   | 'task-progress'
   | 'actual-costs'
-  | 'earned-value';
+  | 'earned-value'
+  | 'deliverables'
+  | 'team'
+  | 'closure-report';
 
 /** Vues hors livrables PMBOK : portefeuille, administration, compte. */
 export type StandaloneView =
@@ -173,8 +176,8 @@ export interface PmbokOutput {
   produced: readonly number[];
   /** Processus qui l'alimentent ou le mettent à jour ensuite. */
   fedBy: readonly number[];
-  /** Vue de l'application qui outille l'output (absent : pas encore outillé). */
-  view?: OutputView;
+  /** Vue de l'application qui outille l'output. */
+  view: OutputView;
 }
 
 // Déclarés dans l'ordre du cycle de vie.
@@ -297,8 +300,8 @@ export const PMBOK8_OUTPUTS: readonly PmbokOutput[] = [
     view: 'project-management-plan',
   },
   // Exécution
-  { id: 'deliverables', label: 'Livrables', produced: [27], fedBy: [32] },
-  { id: 'team', label: 'Équipe et affectations', produced: [22], fedBy: [23] },
+  { id: 'deliverables', label: 'Livrables', produced: [27], fedBy: [32], view: 'deliverables' },
+  { id: 'team', label: 'Équipe et affectations', produced: [22], fedBy: [23], view: 'team' },
   { id: 'issue-log', label: 'Journal des problèmes', produced: [27], fedBy: [30], view: 'issue-log' },
   {
     id: 'work-performance-data',
@@ -342,7 +345,7 @@ export const PMBOK8_OUTPUTS: readonly PmbokOutput[] = [
   { id: 'report', label: 'Rapport exécutif', produced: [30], fedBy: [31, 33, 34, 38, 39], view: 'report' },
   { id: 'change-log', label: 'Registre des modifications', produced: [39], fedBy: [], view: 'change-log' },
   // Clôture
-  { id: 'closure-report', label: 'Rapport de clôture', produced: [40], fedBy: [] },
+  { id: 'closure-report', label: 'Rapport de clôture', produced: [40], fedBy: [], view: 'closure-report' },
 ];
 
 export function processByNumber(number: number): PmbokProcess {
@@ -460,6 +463,11 @@ export const VIEW_DESCRIPTIONS: Record<AppView, string> = {
     "Fiche de chaque élément de la WBS : travail, responsable, livrable, jalons, critères d'acceptation, effort et coûts rattachés.",
   gantt: 'Échéancier des tâches et des jalons, du démarrage à la clôture.',
   risks: 'Identification, évaluation probabilité × impact, réponses et suivi des risques du projet.',
+  deliverables:
+    "Livrables désignés dans le dictionnaire de la WBS : avancement, vérification de leur qualité et décision d'acceptation.",
+  team: "Qui fait quoi dans le projet, quand et avec quelle charge, et l'évaluation de la performance de l'équipe.",
+  'closure-report':
+    "Bilan final du projet, transition du résultat vers l'exploitation et son acceptation ; son approbation clôt le projet.",
 };
 
 export function outputForView(view: AppView): PmbokOutput | undefined {

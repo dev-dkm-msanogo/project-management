@@ -70,6 +70,12 @@ import type {
   WbsDictionaryDto,
   WbsDictionaryInput,
   DocumentVersionsDto,
+  ClosureReportDto,
+  ClosureReportInput,
+  DeliverablesDto,
+  DeliverablesInput,
+  TeamAssessmentInput,
+  TeamDto,
 } from '@shared/index';
 import { API_BASE_URL, apiFetch, readErrorMessage } from '@/api/http';
 
@@ -265,3 +271,6 @@ export const scopeStatementApi = documentApi<ScopeStatementDto, ScopeStatementIn
   'scope-statement',
   "de l'énoncé du périmètre",
 );
+export const deliverablesApi = documentApi<DeliverablesDto, DeliverablesInput>('deliverables', 'du registre des livrables');
+export const teamApi = documentApi<TeamDto, TeamAssessmentInput>('team', "de l'équipe du projet");
+export const closureReportApi = documentApi<ClosureReportDto, ClosureReportInput>('closure-report', 'du rapport de clôture');

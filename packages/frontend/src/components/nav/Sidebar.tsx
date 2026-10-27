@@ -10,9 +10,11 @@ import {
   IconBusinessCase,
   IconChangeLog,
   IconCharter,
+  IconClosure,
   IconCommunication,
   IconCostBaseline,
   IconCostEstimates,
+  IconDeliverables,
   IconDirectory,
   IconEarnedValue,
   IconEngagement,
@@ -26,7 +28,6 @@ import {
   IconMyTasks,
   IconLessons,
   IconMenu,
-  IconPlanned,
   IconProcurement,
   IconProjectPlan,
   IconProjects,
@@ -51,6 +52,7 @@ import {
   IconStakeholderMap,
   IconStakeholders,
   IconStrategy,
+  IconTeam,
   IconTeamCharter,
   IconUsers,
   IconMilestones,
@@ -122,6 +124,9 @@ const VIEW_ICONS: Record<OutputView, ReactNode> = {
   'task-progress': <IconTaskProgress />,
   'actual-costs': <IconActualCosts />,
   'earned-value': <IconEarnedValue />,
+  deliverables: <IconDeliverables />,
+  team: <IconTeam />,
+  'closure-report': <IconClosure />,
 };
 
 /** Infobulle : processus PMBOK 8 qui produisent l'output. */
@@ -184,24 +189,6 @@ export function Sidebar({ active, onNavigate }: SidebarProps) {
 
   const renderOutput = (output: PmbokOutput) => {
     const view = output.view;
-    if (!view) {
-      return (
-        <li key={output.id}>
-          <div
-            className="nav-item nav-item--planned"
-            aria-disabled="true"
-            title={`${producedHint(output)} — pas encore outillé`}
-          >
-            <span className="nav-item__icon">
-              <IconPlanned />
-            </span>
-            <span className="nav-item__label">{output.label}</span>
-            <span className="visually-hidden"> (pas encore outillé)</span>
-          </div>
-        </li>
-      );
-    }
-
     const isActive = active === view;
     return (
       <li key={output.id}>
@@ -308,7 +295,6 @@ export function Sidebar({ active, onNavigate }: SidebarProps) {
           </div>
         )}
 
-        <p className="nav-legend">Livrables PMBOK 8 · en gris : pas encore outillés</p>
       </nav>
     </aside>
   );

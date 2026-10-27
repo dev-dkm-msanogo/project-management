@@ -40,7 +40,10 @@ export type DocumentTable =
   | 'quality_reports'
   | 'quality_analyses'
   | 'funding_strategies'
-  | 'actual_costs';
+  | 'actual_costs'
+  | 'deliverables_registers'
+  | 'team_assessments'
+  | 'closure_reports';
 
 export const DOCUMENT_TABLES: readonly DocumentTable[] = [
   'risk_registers',
@@ -77,6 +80,9 @@ export const DOCUMENT_TABLES: readonly DocumentTable[] = [
   'quality_analyses',
   'funding_strategies',
   'actual_costs',
+  'deliverables_registers',
+  'team_assessments',
+  'closure_reports',
 ];
 
 interface DocumentMapping<T, Input> {
