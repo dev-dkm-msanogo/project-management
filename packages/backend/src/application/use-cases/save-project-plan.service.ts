@@ -19,6 +19,7 @@ export class SaveProjectPlanService implements SaveProjectPlanUseCase {
     const plan = inputToPlan(command.projectId, command.input);
     await this.beforeSave(command.projectId, plan);
     await this.repository.save(plan);
-    return this.toDto(plan);
+    // Relu : le dépôt peut avoir ajusté le plan (dates des lots fixées par le réseau d'activités).
+    return this.toDto((await this.repository.findByProjectId(command.projectId)) ?? plan);
   }
 }

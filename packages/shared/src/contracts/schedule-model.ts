@@ -46,6 +46,8 @@ export interface ActivityInput {
   /** Durée retenue, en jours ouvrés (0 : jalon). */
   durationDays: number;
   predecessors: DependencyInput[];
+  /** Contrainte « début au plus tôt le » (ISO) ; `null` : seules les dépendances placent l'activité. */
+  startNoEarlierThan: string | null;
   method: DurationMethod;
   basis: DurationBasisInput | null;
   /** Attributs détaillés (template « Activity Attributes »). */
@@ -122,11 +124,21 @@ export interface ScheduleNetworkDto {
   criticalPath: string[];
 }
 
+/** Dates fixées par le réseau pour les éléments de la WBS qui portent des activités. */
+export type ScheduledWbsDto = Record<string, { start: string; end: string }>;
+
 export interface ScheduleModelDto extends ScheduleModelInput {
   projectId: string;
   /** Intitulés des éléments de la WBS liés, lus dans l'échéancier. */
   wbsNames: Record<string, string>;
   network: ScheduleNetworkDto;
+  wbsDates: ScheduledWbsDto;
+}
+
+/** Aperçu d'un modèle modifié (Gantt) : réseau et dates de la WBS recalculés, sans rien enregistrer. */
+export interface SchedulePreviewDto {
+  network: ScheduleNetworkDto;
+  wbsDates: ScheduledWbsDto;
 }
 
 // --- Dictionnaire de la WBS ---

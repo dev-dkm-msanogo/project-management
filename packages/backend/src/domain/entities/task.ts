@@ -52,6 +52,19 @@ export class Task {
     );
   }
 
+  /** Même tâche, à d'autres dates (ordonnancement par le réseau d'activités). */
+  withDates(start: Date, end: Date): Task {
+    return Task.create({
+      wbs: this.wbs.value,
+      name: this.name,
+      status: this.status,
+      assigneeId: this.assigneeId,
+      start,
+      end,
+      comments: this.comments,
+    });
+  }
+
   /** Durée en jours (inclusive), ou null si les dates sont incomplètes. */
   get durationDays(): number | null {
     if (!this.start || !this.end) return null;

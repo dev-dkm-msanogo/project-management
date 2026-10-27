@@ -72,7 +72,8 @@ pour la DSI de Dakar Mobilité. Interface en français, montants en **FCFA**.
 - **Modèle d'ordonnancement** (templates « Activity List », « Activity Attributes », « Duration
   Estimates », « Duration Estimating Worksheet », « Milestone List », « Project Calendar », « Project
   Schedule Network Diagram » et « Schedule Baseline », processus 9), en quatre pages qui partagent un
-  même document : l'échéancier (WBS et Gantt) n'est pas modifié.
+  même document. **Échéancier unifié** : le réseau d'activités fixe les dates de la WBS (voir « Plan de
+  projet »).
   - *Activités et durées* : liste (élément de la WBS existant, responsable, effort, durée retenue,
     prédécesseurs), attributs (ressources, compétences, type d'effort, lieu, contraintes,
     hypothèses), estimations des durées et feuille d'estimation par méthode (analogue : référence ×
@@ -212,7 +213,16 @@ pour la DSI de Dakar Mobilité. Interface en français, montants en **FCFA**.
   Restent saisis : période, déclaration, résumé, décisions et indicateurs hors registres, priorités,
   confiance. L'en-tête signale une période sans mesure d'avancement. Les rapports enregistrés dans
   l'ancien format sont convertis à la lecture.
-- **Plan de projet** : structure de découpage (WBS) éditable et diagramme de Gantt.
+- **Plan de projet et échéancier unifié** : structure de découpage (WBS) éditable et diagramme de
+  Gantt. Les durées, dépendances et contraintes « début au plus tôt » des activités calculent les dates
+  (méthode du chemin critique, jours ouvrés du calendrier) ; chaque élément de la WBS qui porte des
+  activités en prend les dates (du début de la première à la fin de la dernière), les autres gardent
+  leurs dates saisies. Une date saisie qui ne diffère de celle du réseau que par des jours non ouvrés
+  (une fin le samedi pour le vendredi) est conservée. Le **Gantt modifiable** montre la WBS, ses
+  activités, les jalons, les dépendances et le chemin critique : glisser une activité fixe son début au
+  plus tôt, étirer sa fin change sa durée (au clavier : flèches, Maj + flèches) ; le réseau se recalcule
+  à l'écran (`POST …/schedule-model/preview`, sans enregistrer) et « Enregistrer l'échéancier » crée une
+  seule version. Figé avec le plan de management approuvé (révision nécessaire).
 - **Registre des risques** (template « Risk Register », processus 17 à 19, alimenté par 29 et 38) :
   identification ; analyse avec un impact par objectif (périmètre, qualité, délai, coût, échelles du
   plan de gestion des risques), score = probabilité × impact le plus fort, matrice 5 × 5 ; stratégie

@@ -40,6 +40,7 @@ export const saveScheduleModelBodySchema = z.object({
         predecessors: z
           .array(z.object({ activity: entryCode, type: z.enum(['FS', 'SS', 'FF', 'SF']), lagDays: z.number().int().min(-365).max(365) }))
           .max(20),
+        startNoEarlierThan: isoDate.nullable().default(null),
         method: z.enum(['ANALOGOUS', 'PARAMETRIC', 'THREE_POINT']),
         basis: basis.nullable(),
         resources: text(500),

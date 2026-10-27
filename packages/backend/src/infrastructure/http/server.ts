@@ -166,6 +166,7 @@ export async function buildServer(
       getProjectPlan: container.getProjectPlan,
       saveProjectPlan: container.saveProjectPlan,
       listDocumentVersions: container.listDocumentVersions,
+      previewSchedule: container.previewSchedule,
     }),
   );
   await app.register(

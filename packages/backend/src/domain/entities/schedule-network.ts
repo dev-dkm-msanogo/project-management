@@ -14,6 +14,8 @@ export interface NetworkActivity {
   code: string;
   durationDays: number;
   predecessors: readonly NetworkDependency[];
+  /** Contrainte « début au plus tôt le » : l'activité ne commence pas avant ce jour. */
+  startNoEarlierThan?: Date | null;
 }
 
 export interface ScheduledActivity {
@@ -79,7 +81,8 @@ function inLoop(blocked: Set<string>, successors: Map<string, string[]>): Set<st
 /**
  * Méthode du chemin critique, en jours ouvrés du calendrier du projet. Passe avant (dates au plus
  * tôt), passe arrière (dates au plus tard), marge totale ; une activité sans marge est critique.
- * Relations fin-début, début-début, fin-fin et début-fin, avec avance ou décalage.
+ * Relations fin-début, début-début, fin-fin et début-fin, avec avance ou décalage ; une contrainte
+ * « début au plus tôt le » retarde l'activité jusqu'à ce jour.
  */
 export function computeNetwork(
   activities: readonly NetworkActivity[],
@@ -93,7 +96,7 @@ export function computeNetwork(
   const es = new Map<string, number>();
   for (const activity of order) {
     const d = activity.durationDays;
-    let start = 0;
+    let start = activity.startNoEarlierThan ? calendar.indexFrom(projectStart, activity.startNoEarlierThan) : 0;
     for (const { activity: pred, type, lagDays } of activity.predecessors) {
       const predStart = es.get(pred)!;
       const predFinish = predStart + duration.get(pred)!;

@@ -38,6 +38,8 @@ export interface Activity {
   effortHours: number;
   durationDays: number;
   predecessors: readonly NetworkDependency[];
+  /** Contrainte « début au plus tôt le » (disponibilité d'un prestataire, d'un site…). */
+  startNoEarlierThan: Date | null;
   method: DurationMethod;
   basis: DurationBasis | null;
   resources: string;
@@ -135,6 +137,9 @@ function activityOf(params: Activity): Activity {
     throw new DomainError(`${code} : la durée est un nombre entier de jours ouvrés.`);
   }
   if (params.basis) assertBasis(code, params.method, params.basis);
+  if (params.startNoEarlierThan && !validDate(params.startNoEarlierThan)) {
+    throw new DomainError(`${code} : date de début au plus tôt invalide.`);
+  }
   return {
     code,
     name: requiredText(params.name, `${code} : nommez l'activité.`),
@@ -144,6 +149,7 @@ function activityOf(params: Activity): Activity {
     effortHours: params.effortHours,
     durationDays: params.durationDays,
     predecessors: params.predecessors.map((dependency) => ({ ...dependency, activity: dependency.activity.trim() })),
+    startNoEarlierThan: params.startNoEarlierThan ? new Date(params.startNoEarlierThan) : null,
     method: params.method,
     basis: params.basis ? { ...params.basis } : null,
     resources: params.resources.trim(),
@@ -181,12 +187,14 @@ function linkDependencies(activities: Activity[]): Activity[] {
 /**
  * Agrégat racine : le modèle d'ordonnancement du projet. Activités rattachées à la WBS, durées
  * et leur base d'estimation, dépendances sans boucle ; jalons ; calendrier ; référence approuvée
- * par le chef de projet puis par le sponsor. Le réseau (chemin critique) en est calculé.
+ * par le chef de projet puis par le sponsor. Le réseau (chemin critique) en est calculé, et il fixe
+ * les dates des éléments de la WBS qui portent des activités.
  */
 export class ScheduleModel {
   private constructor(
     readonly props: Readonly<ScheduleModelProps>,
     readonly network: ScheduleNetwork,
+    private readonly calendar: WorkingCalendar,
   ) {}
 
   static create(params: ScheduleModelProps): ScheduleModel {
@@ -246,10 +254,27 @@ export class ScheduleModel {
       },
     });
     // Le réseau est calculé à la création : une boucle de dépendances est refusée.
-    return new ScheduleModel(props, computeNetwork(activities, calendar, props.projectStart));
+    return new ScheduleModel(props, computeNetwork(activities, calendar, props.projectStart), calendar);
   }
 
   get projectId(): string {
     return this.props.projectId;
+  }
+
+  /**
+   * Dates d'un élément de la WBS qui porte des activités : du début au plus tôt de la première à la
+   * fin au plus tôt de la dernière ; `null` sans activité (ses dates restent saisies). Une date
+   * actuelle qui n'en diffère que par des jours non ouvrés (une fin le samedi pour le vendredi) est
+   * la même date d'ordonnancement : elle est conservée.
+   */
+  scheduleOf(wbs: string, current: { start: Date | null; end: Date | null }): { start: Date; end: Date } | null {
+    const codes = new Set(this.props.activities.filter((activity) => activity.wbsCode === wbs).map((activity) => activity.code));
+    const scheduled = this.network.activities.filter((activity) => codes.has(activity.code));
+    if (scheduled.length === 0) return null;
+    const start = new Date(Math.min(...scheduled.map((activity) => activity.earlyStart.getTime())));
+    const end = new Date(Math.max(...scheduled.map((activity) => activity.earlyFinish.getTime())));
+    const keepStart = current.start && current.start <= start && this.calendar.onOrAfter(current.start).getTime() === start.getTime();
+    const keepEnd = current.end && current.end >= end && this.calendar.onOrBefore(current.end).getTime() === end.getTime();
+    return { start: keepStart ? current.start! : start, end: keepEnd ? current.end! : end };
   }
 }

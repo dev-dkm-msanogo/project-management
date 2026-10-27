@@ -85,6 +85,8 @@ function describe(request: FastifyRequest, reply: FastifyReply): Described | nul
     return reply.statusCode === 401 ? { action: 'Échec de connexion', detail: email ?? null, email } : null;
   }
   if (!ok || method === 'GET' || method === 'HEAD' || method === 'OPTIONS') return null;
+  // Un aperçu ne modifie rien.
+  if (url.endsWith('/preview')) return null;
 
   const routes: Record<string, () => Described | null> = {
     'POST /api/v1/auth/logout': () => ({ action: 'Déconnexion' }),

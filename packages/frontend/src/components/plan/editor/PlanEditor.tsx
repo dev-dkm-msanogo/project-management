@@ -7,6 +7,8 @@ import { Field } from '@/components/form/Field';
 import { DateInput, SelectInput, TextInput } from '@/components/form/controls';
 import { PersonSelect } from '@/components/people/People';
 import { useResourceDirectory } from '@/hooks/useAdministration';
+import { useScheduleModel } from '@/hooks/useProjectDocuments';
+import { formatShortDate } from '@/lib/format';
 
 interface PlanEditorProps {
   mode: 'edit' | 'create';
@@ -20,6 +22,9 @@ interface PlanEditorProps {
 export function PlanEditor({ mode, projectId, initialInput, onCancel, onSaved }: PlanEditorProps) {
   const [input, setInput] = useState<ProjectPlanInput>(initialInput);
   const { data: directory } = useResourceDirectory();
+  // Lots planifiés par le réseau d'activités : leurs dates en viennent, elles ne se saisissent pas.
+  const { data: schedule } = useScheduleModel(projectId);
+  const scheduled = schedule?.wbsDates ?? {};
   // Personnes affectables : ressources actives du référentiel (une ressource archivée reste affichée si déjà affectée).
   const assigneeOptions = (current: string | null) => [
     { value: '', label: 'Personne' },
@@ -76,12 +81,22 @@ export function PlanEditor({ mode, projectId, initialInput, onCancel, onSaved }:
                   options={assigneeOptions(task.assigneeId)}
                 />
               </Field>
-              <Field label="Début">
-                <DateInput value={task.start} onChange={(start) => update({ start })} />
-              </Field>
-              <Field label="Fin">
-                <DateInput value={task.end} onChange={(end) => update({ end })} />
-              </Field>
+              {scheduled[task.wbs] ? (
+                <Field label="Dates" hint="Calculées par le réseau d'activités (durées et dépendances) : modifiez-les dans le Gantt ou les activités.">
+                  <span className="field__static">
+                    {formatShortDate(scheduled[task.wbs]!.start)} → {formatShortDate(scheduled[task.wbs]!.end)}
+                  </span>
+                </Field>
+              ) : (
+                <>
+                  <Field label="Début">
+                    <DateInput value={task.start} onChange={(start) => update({ start })} />
+                  </Field>
+                  <Field label="Fin">
+                    <DateInput value={task.end} onChange={(end) => update({ end })} />
+                  </Field>
+                </>
+              )}
               <Field label="Commentaires">
                 <TextInput
                   value={task.comments ?? ''}

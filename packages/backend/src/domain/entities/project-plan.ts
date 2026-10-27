@@ -62,6 +62,17 @@ export class ProjectPlan {
     return this.datedBounds()?.end ?? null;
   }
 
+  /** Plan dont certains éléments prennent les dates fixées par l'ordonnancement (`null` : inchangé). */
+  withScheduledDates(scheduleOf: (task: Task) => { start: Date; end: Date } | null): ProjectPlan {
+    return ProjectPlan.create({
+      ...this.props,
+      tasks: this.props.tasks.map((task) => {
+        const dates = scheduleOf(task);
+        return dates ? task.withDates(dates.start, dates.end) : task;
+      }),
+    });
+  }
+
   /** Durée totale du projet en jours (inclusive). */
   get durationDays(): number | null {
     const bounds = this.datedBounds();

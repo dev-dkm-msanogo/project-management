@@ -117,6 +117,7 @@ export function blankActivity(code: string, wbsCode: string): ActivityInput {
     effortHours: 0,
     durationDays: 1,
     predecessors: [],
+    startNoEarlierThan: null,
     method: 'ANALOGOUS',
     basis: null,
     resources: '',
@@ -140,7 +141,7 @@ export function blankScheduleModel(): ScheduleModelInput {
 }
 
 export function scheduleModelDtoToInput(dto: ScheduleModelDto): ScheduleModelInput {
-  const { projectId: _projectId, wbsNames: _wbsNames, network: _network, ...input } = dto;
+  const { projectId: _projectId, wbsNames: _wbsNames, network: _network, wbsDates: _wbsDates, ...input } = dto;
   return structuredClone(input);
 }
 

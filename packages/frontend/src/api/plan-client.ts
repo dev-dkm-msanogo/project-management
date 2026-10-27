@@ -1,4 +1,10 @@
-import type { DocumentVersionsDto, ProjectPlanDto, ProjectPlanInput } from '@shared/index';
+import type {
+  DocumentVersionsDto,
+  ProjectPlanDto,
+  ProjectPlanInput,
+  ScheduleModelInput,
+  SchedulePreviewDto,
+} from '@shared/index';
 import { API_BASE_URL, apiFetch, readErrorMessage } from '@/api/http';
 import type { DocumentHistoryApi } from '@/api/project-documents';
 
@@ -57,3 +63,16 @@ export const planHistoryApi: DocumentHistoryApi<ProjectPlanDto> = {
     return (await response.json()) as ProjectPlanDto;
   },
 };
+
+/** Aperçu d'un modèle d'ordonnancement modifié (Gantt) : réseau et dates de la WBS, sans enregistrer. */
+export async function previewSchedule(projectId: string, input: ScheduleModelInput): Promise<SchedulePreviewDto> {
+  const response = await apiFetch(`${API_BASE_URL}/api/v1/projects/${encodeURIComponent(projectId)}/schedule-model/preview`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  });
+  if (!response.ok) {
+    throw new Error(await readErrorMessage(response, `Échec du recalcul de l'échéancier (HTTP ${response.status}).`));
+  }
+  return (await response.json()) as SchedulePreviewDto;
+}

@@ -135,7 +135,13 @@ import { procurementPlanReader } from '@application/use-cases/procurement-plan.r
 import { projectManagementPlanReader } from '@application/use-cases/project-management-plan.reader';
 import { changeLogReader } from '@application/use-cases/change-log.reader';
 import { issueLogServices } from '@application/use-cases/issue-log.services';
-import { scheduleModelServices, wbsDictionaryServices } from '@application/use-cases/schedule-model.services';
+import {
+  PreviewScheduleService,
+  realigningModels,
+  scheduledPlans,
+  scheduleModelServices,
+  wbsDictionaryServices,
+} from '@application/use-cases/schedule-model.services';
 import { stakeholderMappingServices } from '@application/use-cases/stakeholder-mapping.services';
 import { qualityReportServices } from '@application/use-cases/quality-report.services';
 import { fundingStrategyReader, GetFundingRequirementsService } from '@application/use-cases/funding.services';
@@ -539,6 +545,7 @@ export interface AppContainer {
   deleteExecutiveReport: DeleteExecutiveReportUseCase;
   getProjectPlan: GetProjectPlanUseCase;
   saveProjectPlan: SaveProjectPlanUseCase;
+  previewSchedule: PreviewScheduleService;
   listProjects: ListProjectsUseCase;
   createProject: CreateProjectUseCase;
   updateProject: UpdateProjectUseCase;
@@ -971,6 +978,8 @@ function wireUseCases(repos: Repositories, hasher: PasswordHasher): AppContainer
   const checked: Repositories = { ...repos, ...checkedRepositories(people) };
   const locked = lockedRepositories(checked);
   const changeDecisions = changeDecisionGuard(repos.changeLogs);
+  // Échéancier unifié : le réseau d'activités fixe les dates des éléments de la WBS qui en portent.
+  const plans = scheduledPlans(locked.plans, repos.scheduleModels);
   // Pilotage du réel : « aujourd'hui » des contrôles, retards et dates d'état.
   const clock = () => new Date();
   // Gouvernance : un projet n'est visible que de ses membres (et des administrateurs).
@@ -1029,7 +1038,7 @@ function wireUseCases(repos: Repositories, hasher: PasswordHasher): AppContainer
     deleteExecutiveReport: new DeleteExecutiveReportService(repos.reports),
     getProjectPlan: new GetProjectPlanService(repos.plans, planDto),
     saveProjectPlan: new SaveProjectPlanService(
-      locked.plans,
+      plans,
       (projectId, plan) => wbsGuard.beforeSave(projectId, plan),
       planDto,
     ),
@@ -1278,7 +1287,8 @@ function wireUseCases(repos: Repositories, hasher: PasswordHasher): AppContainer
       schedule.toDto,
       (projectId) => new DocumentNotFoundError(`Aucun modèle d'ordonnancement pour le projet "${projectId}".`),
     ),
-    saveScheduleModel: new SaveProjectDocumentService(locked.scheduleModels, {
+    previewSchedule: new PreviewScheduleService(repos.plans),
+    saveScheduleModel: new SaveProjectDocumentService(realigningModels(locked.scheduleModels, plans), {
       fromInput: inputToScheduleModel,
       toDto: schedule.toDto,
       beforeSave: schedule.beforeSave,

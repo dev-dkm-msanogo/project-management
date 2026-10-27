@@ -191,6 +191,9 @@ function ActivityForm({ activity, update, others, wbsOptions, peopleId }: Activi
           <Field label="Durée retenue (jours ouvrés)" hint="0 pour un jalon.">
             <NumberInput value={activity.durationDays} onChange={(durationDays) => update({ durationDays })} min={0} step={1} />
           </Field>
+          <Field label="Début au plus tôt le" hint="Facultatif : l'activité ne commence pas avant ce jour.">
+            <DateInput value={activity.startNoEarlierThan} onChange={(startNoEarlierThan) => update({ startNoEarlierThan })} />
+          </Field>
         </div>
         <CheckboxInput
           label="Détailler l'estimation (feuille d'estimation)"

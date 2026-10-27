@@ -28,6 +28,30 @@ export class WorkingCalendar {
     return this.weekdays.has(isoWeekday(date)) && !this.holidays.has(dayKey(date));
   }
 
+  /** Premier jour ouvré à partir de `date` (incluse). */
+  onOrAfter(date: Date): Date {
+    return this.workingDays(date, 1)[0]!;
+  }
+
+  /** Dernier jour ouvré jusqu'à `date` (incluse). */
+  onOrBefore(date: Date): Date {
+    for (let cursor = new Date(date), guard = 0; guard < 3660; guard += 1) {
+      if (this.isWorkingDay(cursor)) return cursor;
+      cursor = new Date(cursor.getTime() - MS_PER_DAY);
+    }
+    throw new DomainError('Le calendrier ne compte aucun jour ouvré avant cette date.');
+  }
+
+  /** Rang du jour ouvré de `date` (ou du suivant) à partir de `start` : 0 pour le premier ; 0 avant `start`. */
+  indexFrom(start: Date, date: Date): number {
+    let index = 0;
+    for (let cursor = new Date(start), guard = 0; cursor.getTime() < date.getTime() && guard < 3660; guard += 1) {
+      if (this.isWorkingDay(cursor)) index += 1;
+      cursor = new Date(cursor.getTime() + MS_PER_DAY);
+    }
+    return index;
+  }
+
   /** Les `count` premiers jours ouvrés à partir de `start` (inclus). */
   workingDays(start: Date, count: number): Date[] {
     const days: Date[] = [];

@@ -357,3 +357,14 @@
   color: var(--rag-red-text);
   font-weight: 700;
 }
+
+/* Valeur calculée, affichée à la place d'un champ (ex. dates d'un lot fixées par le réseau). */
+.field__static {
+  display: block;
+  padding: 7px 10px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-alt);
+  color: var(--text);
+  font-size: 0.88rem;
+}

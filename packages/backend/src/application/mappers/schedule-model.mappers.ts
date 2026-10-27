@@ -2,8 +2,10 @@ import { estimatedDays, ScheduleModel } from '@domain/entities/schedule-model';
 import { WbsDictionary } from '@domain/entities/wbs-dictionary';
 import { isoDate, isoDateOrNull, parseIsoDate, parseIsoDateOrNull } from '@application/mappers/iso-date';
 import type {
+  ScheduledWbsDto,
   ScheduleModelDto,
   ScheduleModelInput,
+  ScheduleNetworkDto,
   WbsDictionaryDto,
   WbsDictionaryInput,
 } from '@shared/index';
@@ -20,6 +22,7 @@ export function scheduleModelToInput(model: ScheduleModel): ScheduleModelInput {
     activities: props.activities.map((activity) => ({
       ...activity,
       predecessors: activity.predecessors.map((dependency) => ({ ...dependency })),
+      startNoEarlierThan: activity.startNoEarlierThan ? isoDate(activity.startNoEarlierThan) : null,
       basis: activity.basis ? { ...activity.basis } : null,
     })),
     milestones: props.milestones.map((milestone) => ({
@@ -41,7 +44,11 @@ export function inputToScheduleModel(projectId: string, input: ScheduleModelInpu
     projectId,
     preparedOn: parseIsoDate(input.preparedOn),
     projectStart: parseIsoDate(input.projectStart),
-    activities: input.activities,
+    // Activités enregistrées avant la contrainte de début : sans contrainte.
+    activities: input.activities.map((activity) => ({
+      ...activity,
+      startNoEarlierThan: activity.startNoEarlierThan ? parseIsoDate(activity.startNoEarlierThan) : null,
+    })),
     // Jalons enregistrés avant la date d'atteinte : pas encore atteints.
     milestones: input.milestones.map((milestone) => ({
       ...milestone,
@@ -56,35 +63,45 @@ export function inputToScheduleModel(projectId: string, input: ScheduleModelInpu
   });
 }
 
-/** Domaine → lecture, avec le réseau calculé et les intitulés des éléments de la WBS. */
-export function toScheduleModelDto(model: ScheduleModel, wbsNames: Record<string, string>): ScheduleModelDto {
-  const { network } = model;
-  const activities = new Map(model.props.activities.map((activity) => [activity.code, activity]));
+/** Domaine → lecture, avec le réseau calculé, les intitulés et les dates des éléments de la WBS. */
+export function toScheduleModelDto(
+  model: ScheduleModel,
+  wbsNames: Record<string, string>,
+  wbsDates: ScheduledWbsDto,
+): ScheduleModelDto {
   return {
     projectId: model.projectId,
     ...scheduleModelToInput(model),
     wbsNames,
-    network: {
-      start: isoDate(network.start),
-      finish: isoDate(network.finish),
-      workingDays: network.workingDays,
-      criticalPath: network.criticalPath,
-      activities: network.activities.map((scheduled) => {
-        const activity = activities.get(scheduled.code)!;
-        return {
-          code: scheduled.code,
-          earlyStart: isoDate(scheduled.earlyStart),
-          earlyFinish: isoDate(scheduled.earlyFinish),
-          lateStart: isoDate(scheduled.lateStart),
-          lateFinish: isoDate(scheduled.lateFinish),
-          totalFloat: scheduled.totalFloat,
-          critical: scheduled.critical,
-          estimatedDays: activity.basis
-            ? Math.round(estimatedDays(activity.basis, activity.effortHours) * 10) / 10
-            : null,
-        };
-      }),
-    },
+    network: toScheduleNetworkDto(model),
+    wbsDates,
+  };
+}
+
+/** Réseau calculé (méthode du chemin critique), avec la durée estimée par la base de chaque activité. */
+export function toScheduleNetworkDto(model: ScheduleModel): ScheduleNetworkDto {
+  const { network } = model;
+  const activities = new Map(model.props.activities.map((activity) => [activity.code, activity]));
+  return {
+    start: isoDate(network.start),
+    finish: isoDate(network.finish),
+    workingDays: network.workingDays,
+    criticalPath: network.criticalPath,
+    activities: network.activities.map((scheduled) => {
+      const activity = activities.get(scheduled.code)!;
+      return {
+        code: scheduled.code,
+        earlyStart: isoDate(scheduled.earlyStart),
+        earlyFinish: isoDate(scheduled.earlyFinish),
+        lateStart: isoDate(scheduled.lateStart),
+        lateFinish: isoDate(scheduled.lateFinish),
+        totalFloat: scheduled.totalFloat,
+        critical: scheduled.critical,
+        estimatedDays: activity.basis
+          ? Math.round(estimatedDays(activity.basis, activity.effortHours) * 10) / 10
+          : null,
+      };
+    }),
   };
 }
 
