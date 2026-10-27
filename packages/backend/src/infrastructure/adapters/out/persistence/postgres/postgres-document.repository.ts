@@ -43,7 +43,8 @@ export type DocumentTable =
   | 'actual_costs'
   | 'deliverables_registers'
   | 'team_assessments'
-  | 'closure_reports';
+  | 'closure_reports'
+  | 'product_backlogs';
 
 export const DOCUMENT_TABLES: readonly DocumentTable[] = [
   'risk_registers',
@@ -83,6 +84,7 @@ export const DOCUMENT_TABLES: readonly DocumentTable[] = [
   'deliverables_registers',
   'team_assessments',
   'closure_reports',
+  'product_backlogs',
 ];
 
 interface DocumentMapping<T, Input> {

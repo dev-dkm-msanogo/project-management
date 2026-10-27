@@ -307,7 +307,12 @@ export class GetPortfolioService {
 
   private async summarize(
     projectId: string,
-    project: { name: string; description: string | null; status: PortfolioProjectDto['status'] },
+    project: {
+      name: string;
+      description: string | null;
+      status: PortfolioProjectDto['status'];
+      methodology: PortfolioProjectDto['methodology'];
+    },
     access: PortfolioProjectDto['access'],
   ): Promise<PortfolioProjectDto> {
     const today = this.clock();
@@ -334,6 +339,7 @@ export class GetPortfolioService {
       name: project.name,
       description: project.description,
       status: project.status,
+      methodology: project.methodology,
       access,
       rag: report ? (await readReport(report, sources.reportDto)).overall.rag : null,
       plannedStart: plan?.startDate ? isoDate(plan.startDate) : null,

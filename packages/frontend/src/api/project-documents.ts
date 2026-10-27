@@ -76,6 +76,8 @@ import type {
   DeliverablesInput,
   TeamAssessmentInput,
   TeamDto,
+  ProductBacklogDto,
+  ProductBacklogInput,
 } from '@shared/index';
 import { API_BASE_URL, apiFetch, readErrorMessage } from '@/api/http';
 
@@ -274,3 +276,4 @@ export const scopeStatementApi = documentApi<ScopeStatementDto, ScopeStatementIn
 export const deliverablesApi = documentApi<DeliverablesDto, DeliverablesInput>('deliverables', 'du registre des livrables');
 export const teamApi = documentApi<TeamDto, TeamAssessmentInput>('team', "de l'équipe du projet");
 export const closureReportApi = documentApi<ClosureReportDto, ClosureReportInput>('closure-report', 'du rapport de clôture');
+export const backlogApi = documentApi<ProductBacklogDto, ProductBacklogInput>('backlog', 'du carnet de produit');

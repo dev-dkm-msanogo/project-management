@@ -1,5 +1,6 @@
 import type { ActualCosts } from '@domain/entities/actual-costs';
 import type { DeliverablesRegister } from '@domain/entities/deliverables-register';
+import type { ProductBacklog } from '@domain/entities/product-backlog';
 import type { IssueLog } from '@domain/entities/issue-log';
 import type { QualityReport } from '@domain/entities/quality-report';
 import type { ScheduleModel } from '@domain/entities/schedule-model';
@@ -102,4 +103,18 @@ export const changesCitedByDeliverables =
   async (projectId) =>
     ((await deliverables.findByProjectId(projectId))?.records ?? []).flatMap((record) =>
       cite(record.props.acceptance?.changeCode ?? null, 'le registre des livrables', `livrable ${record.wbsCode}`),
+    );
+
+export const wbsCitedByBacklog =
+  (backlogs: ProjectDocumentRepository<ProductBacklog>): CitationSource =>
+  async (projectId) =>
+    ((await backlogs.findByProjectId(projectId))?.items ?? []).flatMap((item) =>
+      cite(item.props.wbsCode, 'le carnet de produit', item.code),
+    );
+
+export const requirementsCitedByBacklog =
+  (backlogs: ProjectDocumentRepository<ProductBacklog>): CitationSource =>
+  async (projectId) =>
+    ((await backlogs.findByProjectId(projectId))?.items ?? []).flatMap((item) =>
+      cite(item.props.requirementCode, 'le carnet de produit', item.code),
     );

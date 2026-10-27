@@ -33,3 +33,4 @@ export * from './contracts/governance';
 export * from './contracts/deliverables';
 export * from './contracts/team';
 export * from './contracts/closure-report';
+export * from './contracts/agile';

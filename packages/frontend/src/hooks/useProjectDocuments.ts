@@ -1,5 +1,6 @@
 import {
   actualCostsApi,
+  backlogApi,
   assumptionLogApi,
   benefitsPlanApi,
   businessCaseApi,
@@ -143,3 +144,6 @@ export const useDeliverables = (projectId: string) => useProjectResource(project
 export const useTeam = (projectId: string) => useProjectResource(projectId, teamApi.fetch);
 
 export const useClosureReport = (projectId: string) => useProjectResource(projectId, closureReportApi.fetchOptional);
+
+/** Carnet de produit : vide tant qu'aucun élément n'a été ajouté. */
+export const useProductBacklog = (projectId: string) => useProjectResource(projectId, backlogApi.fetch);

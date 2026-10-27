@@ -128,7 +128,14 @@ import {
   wbsCitedByScheduleModel,
   changesCitedByDeliverables,
   wbsCitedByDeliverables,
+  requirementsCitedByBacklog,
+  wbsCitedByBacklog,
 } from '@application/use-cases/citations';
+import { ProductBacklog } from '@domain/entities/product-backlog';
+import { inputToProductBacklog, productBacklogToInput } from '@application/mappers/product-backlog.mappers';
+import { backlogDrivenProgress } from '@application/use-cases/backlog-progress';
+import { productBacklogServices } from '@application/use-cases/product-backlog.services';
+import type { ProductBacklogDto, ProductBacklogInput } from '@shared/index';
 import type { ClosureReport } from '@domain/entities/closure-report';
 import { DeliverablesRegister } from '@domain/entities/deliverables-register';
 import { TeamAssessment } from '@domain/entities/team-assessment';
@@ -647,6 +654,8 @@ export interface AppContainer {
   getTeam: GetProjectDocumentUseCase<TeamDto>;
   saveTeam: SaveProjectDocumentUseCase<TeamAssessmentInput, TeamDto>;
   getClosureReport: GetProjectDocumentUseCase<ClosureReportDto>;
+  getProductBacklog: GetProjectDocumentUseCase<ProductBacklogDto>;
+  saveProductBacklog: SaveProjectDocumentUseCase<ProductBacklogInput, ProductBacklogDto>;
   saveClosureReport: SaveProjectDocumentUseCase<ClosureReportInput, ClosureReportDto>;
   updateTaskProgress: UpdateTaskProgressUseCase;
   getMyTasks: GetMyTasksUseCase;
@@ -720,6 +729,7 @@ interface Repositories {
   deliverables: ProjectDocumentRepository<DeliverablesRegister>;
   teamAssessments: ProjectDocumentRepository<TeamAssessment>;
   closureReports: ProjectDocumentRepository<ClosureReport>;
+  productBacklogs: ProjectDocumentRepository<ProductBacklog>;
   taskProgress: TaskProgressRepository;
   resourceDirectory: ResourceDirectoryRepository;
   approvals: ApprovalRepository;
@@ -782,6 +792,9 @@ function peopleRules(repos: Repositories) {
         { id: props.verification?.verifiedById ?? null, role: `vérificateur du livrable ${props.wbsCode}` },
         { id: props.acceptance?.decidedById ?? null, role: `décideur du livrable ${props.wbsCode}` },
       ]),
+    ),
+    productBacklogs: rule('carnet de produit', repos.productBacklogs, (backlog) =>
+      backlog.items.map((item) => ({ id: item.props.assigneeId, role: `affecté(e) à ${item.code}` })),
     ),
     closureReports: rule('rapport de clôture', repos.closureReports, ({ props }) =>
       props.acceptances.map((item, index) => ({ id: item.resourceId, role: `acceptation n° ${index + 1} de la transition` })),
@@ -922,7 +935,7 @@ function approvalUseCases(
       archive: async (projectId) => {
         const project = await repos.projects.findById(projectId);
         if (project) {
-          await repos.projects.save(project.withDetails({ name: project.name, description: project.description, status: 'CLOSED' }));
+          await repos.projects.save(project.withDetails({ ...project, status: 'CLOSED' }));
         }
       },
       snapshot: (projectId) => documentsOf(projectId, { 'closure-report': readOrSkip(useCases.getClosureReport) }),
@@ -995,7 +1008,12 @@ function approvalUseCases(
   };
 }
 
-function wireUseCases(repos: Repositories, hasher: PasswordHasher): AppContainer {
+function wireUseCases(stores: Repositories, hasher: PasswordHasher): AppContainer {
+  // Approche hybride : les lots de la WBS rattachés au carnet de produit en tirent leur avancement.
+  const repos: Repositories = {
+    ...stores,
+    taskProgress: backlogDrivenProgress(stores.taskProgress, stores.productBacklogs, () => new Date()),
+  };
   const ids = new CryptoIdGenerator();
   const engagement = engagementPlanServices(repos.stakeholders);
   const issues = issueLogServices(repos.risks, repos.changeLogs);
@@ -1026,7 +1044,13 @@ function wireUseCases(repos: Repositories, hasher: PasswordHasher): AppContainer
     wbsCitedByActualCosts(repos.actualCosts),
     wbsCitedByProgress(repos.taskProgress),
     wbsCitedByDeliverables(repos.deliverables),
+    wbsCitedByBacklog(repos.productBacklogs),
   ]);
+  const requirementGuard = referenceGuard(
+    repos.requirements,
+    (register) => register.requirements.map((requirement) => requirement.code),
+    [requirementsCitedByBacklog(repos.productBacklogs)],
+  );
   // Personnes choisies dans le référentiel ; circuit de validation : une version soumise ou
   // approuvée est figée (le suivi reste libre).
   const people = peopleRules(repos);
@@ -1076,6 +1100,12 @@ function wireUseCases(repos: Repositories, hasher: PasswordHasher): AppContainer
     benefitsPlans: repos.benefitsPlans,
     lessonsLearned: repos.lessonsLearned,
   });
+  const backlog = productBacklogServices({
+    plans: repos.plans,
+    requirements: repos.requirements,
+    managementPlans: repos.projectManagementPlans,
+    clock,
+  });
   // Rapport exécutif alimenté par les éléments du projet, calculés à sa date.
   const reportDto = executiveReportReader({
     ...performance,
@@ -1089,6 +1119,7 @@ function wireUseCases(repos: Repositories, hasher: PasswordHasher): AppContainer
   });
   const readFundingStrategy = fundingStrategyReader(repos.charters);
   const readProjectManagementPlan = projectManagementPlanReader({
+    projects: repos.projects,
     charters: repos.charters,
     managementPlans: repos.managementPlans,
     qualityPlans: repos.qualityPlans,
@@ -1167,6 +1198,7 @@ function wireUseCases(repos: Repositories, hasher: PasswordHasher): AppContainer
       repos.deliverables,
       repos.teamAssessments,
       repos.closureReports,
+      repos.productBacklogs,
       repos.taskProgress,
       repos.approvals,
       repos.approvalSnapshots,
@@ -1226,6 +1258,7 @@ function wireUseCases(repos: Repositories, hasher: PasswordHasher): AppContainer
     saveRequirementsRegister: new SaveProjectDocumentService(locked.requirements, {
       fromInput: inputToRequirementsRegister,
       toDto: toRequirementsRegisterDto,
+      beforeSave: (register) => requirementGuard.beforeSave(register.projectId, register),
     }),
     getScopeStatement: new GetProjectDocumentService(
       repos.scopeStatements,
@@ -1467,6 +1500,12 @@ function wireUseCases(repos: Repositories, hasher: PasswordHasher): AppContainer
     saveClosureReport: new SaveProjectDocumentService(locked.closureReports, {
       fromInput: inputToClosureReport,
       toDto: closure.toDto,
+    }),
+    getProductBacklog: new GetProjectRegisterService(repos.productBacklogs, backlog.toDto, ProductBacklog.empty),
+    saveProductBacklog: new SaveProjectDocumentService(checked.productBacklogs, {
+      fromInput: inputToProductBacklog,
+      toDto: backlog.toDto,
+      beforeSave: backlog.beforeSave,
     }),
     updateTaskProgress: new UpdateTaskProgressService(
       repos.plans,
@@ -1841,6 +1880,10 @@ export async function buildContainer(env: AppEnv): Promise<AppContainer> {
         toInput: closureReportToInput,
         fromInput: inputToClosureReport,
       }),
+      productBacklogs: new PostgresDocumentRepository(pool, 'product_backlogs', {
+        toInput: productBacklogToInput,
+        fromInput: inputToProductBacklog,
+      }),
       taskProgress: new PostgresTaskProgressRepository(pool),
       resourceDirectory: new PostgresResourceDirectoryRepository(pool),
       approvals: new PostgresApprovalRepository(pool),
@@ -1898,6 +1941,7 @@ export async function buildContainer(env: AppEnv): Promise<AppContainer> {
     deliverables: new InMemoryProjectDocumentRepository<DeliverablesRegister>([]),
     teamAssessments: new InMemoryProjectDocumentRepository<TeamAssessment>([]),
     closureReports: new InMemoryProjectDocumentRepository<ClosureReport>([]),
+    productBacklogs: new InMemoryProjectDocumentRepository<ProductBacklog>([]),
     taskProgress: new InMemoryTaskProgressRepository(buildProjectAlphaTaskProgress()),
     resourceDirectory: new InMemoryResourceDirectoryRepository(buildResourceDirectory()),
     approvals: new InMemoryApprovalRepository(buildProjectAlphaApprovals()),

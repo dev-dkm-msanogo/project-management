@@ -22,7 +22,6 @@ export const saveProjectManagementPlanBodySchema = z.object({
     gateReview: section,
   }),
   developmentApproach: z.object({
-    kind: z.enum(['PREDICTIVE', 'ADAPTIVE', 'HYBRID']),
     selection: section,
     rationale: section,
     cadence: section,

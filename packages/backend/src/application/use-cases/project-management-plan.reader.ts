@@ -1,4 +1,5 @@
 import type { CommunicationPlan } from '@domain/entities/communication-plan';
+import type { ProjectRepository } from '@application/ports/out/project.repository';
 import type { CostEstimates } from '@domain/entities/cost-estimates';
 import type { ManagementPlans } from '@domain/entities/management-plans';
 import { PerformanceMeasurementBaseline } from '@domain/entities/performance-baseline';
@@ -21,6 +22,7 @@ import type { PlanBaselinesDto, ProjectManagementPlanDto } from '@shared/index';
 
 /** Documents dont le plan de management intègre l'état ou les références de base. */
 export interface PlanComponentSources {
+  projects: ProjectRepository;
   charters: ProjectCharterRepository;
   managementPlans: ProjectDocumentRepository<ManagementPlans>;
   qualityPlans: ProjectDocumentRepository<QualityManagementPlan>;
@@ -43,6 +45,7 @@ export function projectManagementPlanReader(sources: PlanComponentSources) {
   return async (plan: ProjectManagementPlan): Promise<ProjectManagementPlanDto> => {
     const id = plan.projectId;
     const [
+      project,
       charter,
       managementPlans,
       quality,
@@ -55,6 +58,7 @@ export function projectManagementPlanReader(sources: PlanComponentSources) {
       schedule,
       estimates,
     ] = await Promise.all([
+      sources.projects.findById(id),
       sources.charters.findByProjectId(id),
       sources.managementPlans.findByProjectId(id),
       sources.qualityPlans.findByProjectId(id),
@@ -93,6 +97,7 @@ export function projectManagementPlanReader(sources: PlanComponentSources) {
 
     const plans = managementPlans?.plans ?? {};
     return toProjectManagementPlanDto(plan, {
+      methodology: project?.methodology ?? 'PREDICTIVE',
       references: {
         projectManagerId: charter?.props.projectManager.resourceId ?? null,
         sponsorId: charter?.props.sponsor.resourceId ?? null,

@@ -48,13 +48,16 @@ export function toProjectManagementPlanDto(
   plan: ProjectManagementPlan,
   context: {
     references: ProjectManagementPlanDto['references'];
+    methodology: ProjectManagementPlanDto['developmentApproach']['kind'];
     components: Omit<Record<PlanComponentKey, boolean>, keyof ProjectManagementPlan['drafted']>;
     baselines: PlanBaselinesDto;
   },
 ): ProjectManagementPlanDto {
+  const input = projectManagementPlanToInput(plan);
   return {
     projectId: plan.projectId,
-    ...projectManagementPlanToInput(plan),
+    ...input,
+    developmentApproach: { ...input.developmentApproach, kind: context.methodology },
     references: context.references,
     components: { ...context.components, ...plan.drafted },
     baselines: context.baselines,

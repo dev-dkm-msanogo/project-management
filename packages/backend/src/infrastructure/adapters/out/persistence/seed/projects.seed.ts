@@ -11,6 +11,7 @@ export function buildProjectRecords(): ProjectRecord[] {
       name: 'Projet Alpha',
       description: 'Programme de transformation digitale.',
       status: 'ACTIVE',
+      methodology: 'HYBRID',
       createdAt: d(1, 2),
     }),
     ProjectRecord.create({

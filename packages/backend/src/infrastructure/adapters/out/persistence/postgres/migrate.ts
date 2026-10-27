@@ -40,6 +40,7 @@ export async function migrate(pool: Pool): Promise<void> {
       created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
     );
   `);
+  await pool.query(`ALTER TABLE projects ADD COLUMN IF NOT EXISTS methodology TEXT;`);
   await pool.query(`
     CREATE TABLE IF NOT EXISTS executive_reports (
       project_id TEXT PRIMARY KEY,
@@ -57,6 +58,14 @@ export async function migrate(pool: Pool): Promise<void> {
       );
     `);
   }
+  // Méthodologie des projets créés avant son choix : celle de leur plan de management, sinon prédictive.
+  await pool.query(`
+    UPDATE projects p SET methodology = COALESCE(
+      (SELECT m.data -> 'developmentApproach' ->> 'kind' FROM project_management_plans m WHERE m.project_id = p.id),
+      'PREDICTIVE'
+    )
+    WHERE methodology IS NULL;
+  `);
   await pool.query(`
     CREATE TABLE IF NOT EXISTS project_plans (
       project_id TEXT PRIMARY KEY,

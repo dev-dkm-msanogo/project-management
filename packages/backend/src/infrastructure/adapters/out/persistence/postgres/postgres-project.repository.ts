@@ -1,5 +1,6 @@
 import type { Pool } from 'pg';
 import { ProjectRecord } from '@domain/entities/project-record';
+import type { ProjectMethodology } from '@domain/value-objects/project-methodology';
 import type { ProjectStatus } from '@domain/value-objects/project-status';
 import type { ProjectRepository } from '@application/ports/out/project.repository';
 
@@ -8,10 +9,11 @@ interface ProjectRow {
   name: string;
   description: string | null;
   status: string;
+  methodology: string | null;
   created_at: Date;
 }
 
-const SELECT = 'SELECT id, name, description, status, created_at FROM projects';
+const SELECT = 'SELECT id, name, description, status, methodology, created_at FROM projects';
 
 /** Adaptateur SORTANT PostgreSQL du registre des projets (requêtes paramétrées). */
 export class PostgresProjectRepository implements ProjectRepository {
@@ -23,6 +25,7 @@ export class PostgresProjectRepository implements ProjectRepository {
       name: row.name,
       description: row.description,
       status: row.status as ProjectStatus,
+      methodology: (row.methodology ?? 'PREDICTIVE') as ProjectMethodology,
       createdAt: row.created_at,
     });
   }
@@ -40,11 +43,12 @@ export class PostgresProjectRepository implements ProjectRepository {
 
   async save(record: ProjectRecord): Promise<void> {
     await this.pool.query(
-      `INSERT INTO projects (id, name, description, status, created_at)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO projects (id, name, description, status, methodology, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6)
        ON CONFLICT (id) DO UPDATE
-         SET name = EXCLUDED.name, description = EXCLUDED.description, status = EXCLUDED.status`,
-      [record.id, record.name, record.description, record.status, record.createdAt],
+         SET name = EXCLUDED.name, description = EXCLUDED.description, status = EXCLUDED.status,
+             methodology = EXCLUDED.methodology`,
+      [record.id, record.name, record.description, record.status, record.methodology, record.createdAt],
     );
   }
 

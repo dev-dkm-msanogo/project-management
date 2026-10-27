@@ -6,9 +6,8 @@ import { sectionsOf, TextSections } from '@/components/ui/TextSections';
 import { APPROVAL_STATUS_LABELS, APPROVAL_STATUS_MODIFIERS, approvalDate } from '@/lib/approval-format';
 import { formatPercent } from '@/lib/cost-format';
 import { formatFcfaMillions, formatLongDate, formatMillionsValue, formatShortDate } from '@/lib/format';
+import { METHODOLOGY_HINTS, METHODOLOGY_LABELS } from '@/lib/project-format';
 import {
-  APPROACH_HINTS,
-  APPROACH_LABELS,
   CHANGE_LABELS,
   CONFIGURATION_LABELS,
   DEVELOPMENT_TEXT_LABELS,
@@ -295,8 +294,8 @@ export function ProjectManagementPlanView({ plan, projectName, onNavigate, appro
         {tab === 'approach' && (
           <section className="doc-panel">
             <div className="approach-head">
-              <span className="approach-badge">Approche {APPROACH_LABELS[developmentApproach.kind].toLowerCase()}</span>
-              <span className="doc-meta">{APPROACH_HINTS[developmentApproach.kind]}</span>
+              <span className="approach-badge">Approche {METHODOLOGY_LABELS[developmentApproach.kind].toLowerCase()}</span>
+              <span className="doc-meta">{METHODOLOGY_HINTS[developmentApproach.kind]}</span>
             </div>
             <TextSections sections={sectionsOf(DEVELOPMENT_TEXT_LABELS, developmentApproach)} />
           </section>

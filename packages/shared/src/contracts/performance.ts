@@ -3,7 +3,7 @@
  * tableau de bord du portefeuille. Dates en chaînes ISO-8601 (YYYY-MM-DD), montants en FCFA entiers.
  */
 import type { RagLevel } from './executive-status-report';
-import type { ProjectRole, ProjectStatus } from './project';
+import type { ProjectMethodology, ProjectRole, ProjectStatus } from './project';
 import type { TaskStatus } from './project-plan';
 
 // --- Avancement des tâches ---
@@ -161,6 +161,7 @@ export interface PortfolioProjectDto {
   name: string;
   description: string | null;
   status: ProjectStatus;
+  methodology: ProjectMethodology;
   /** Droits de l'utilisateur sur ce projet. */
   access: ProjectRole;
   /** Statut global du rapport exécutif ; `null` sans rapport. */

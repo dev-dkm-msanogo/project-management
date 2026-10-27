@@ -40,6 +40,7 @@ export class CreateProjectService implements CreateProjectUseCase {
       name: input.name,
       description: input.description,
       status: input.status,
+      methodology: input.methodology,
     });
     await this.repository.save(record);
     await this.members.replace(ProjectTeam.create(id, [{ userId: requester.id, role: 'MANAGER' }]));

@@ -8,6 +8,7 @@ export function toProjectRecordDto(record: ProjectRecord, access: ProjectRole): 
     name: record.name,
     description: record.description,
     status: record.status,
+    methodology: record.methodology,
     createdAt: record.createdAt.toISOString(),
     access,
   };

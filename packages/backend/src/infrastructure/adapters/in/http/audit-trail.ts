@@ -47,6 +47,7 @@ const DOCUMENTS: Record<string, string> = {
   deliverables: 'Livrables',
   team: "Évaluation de l'équipe",
   'closure-report': 'Rapport de clôture',
+  backlog: 'Carnet de produit',
 };
 
 const APPROVAL_SUBJECTS: Record<string, string> = {

@@ -5,8 +5,7 @@
  * (rédigés ici). Version, soumission et approbation : circuit de validation. Dates en ISO-8601.
  */
 import type { CostSummaryDto } from './cost-estimates';
-
-export type DevelopmentApproachKind = 'PREDICTIVE' | 'ADAPTIVE' | 'HYBRID';
+import type { ProjectMethodology } from './project';
 
 export interface LifeCyclePhaseInput {
   name: string;
@@ -23,8 +22,8 @@ export interface LifeCycleInput {
   gateReview: string;
 }
 
+/** Approche de développement rédigée ; son type est la méthodologie du projet. */
 export interface DevelopmentApproachInput {
-  kind: DevelopmentApproachKind;
   selection: string;
   rationale: string;
   cadence: string;
@@ -112,8 +111,10 @@ export interface PlanBaselinesDto {
   } | null;
 }
 
-export interface ProjectManagementPlanDto extends ProjectManagementPlanInput {
+export interface ProjectManagementPlanDto extends Omit<ProjectManagementPlanInput, 'developmentApproach'> {
   projectId: string;
+  /** Approche rédigée, et son type : la méthodologie du projet (lue sur le projet). */
+  developmentApproach: DevelopmentApproachInput & { kind: ProjectMethodology };
   /** Chef de projet et sponsor, lus dans la charte : ressources du référentiel (identifiants). */
   references: { projectManagerId: string | null; sponsorId: string | null };
   /** État de chaque composant, évalué à chaque lecture. */

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import type {
-  DevelopmentApproachKind,
   LifeCyclePhaseInput,
   ProjectManagementPlanInput,
 } from '@shared/index';
@@ -8,12 +7,12 @@ import { projectManagementPlanApi } from '@/api/project-documents';
 import { ArrayEditor } from '@/components/form/ArrayEditor';
 import { EditorShell } from '@/components/form/EditorShell';
 import { Field } from '@/components/form/Field';
-import { DateInput, SelectInput, TextArea, TextInput } from '@/components/form/controls';
+import { DateInput, TextArea, TextInput } from '@/components/form/controls';
 import type { DocumentEditorProps } from '@/features/DocumentFeature';
+import { useCurrentProject } from '@/hooks/useCurrentProject';
 import { todayIso } from '@/lib/format';
+import { METHODOLOGY_HINTS, METHODOLOGY_LABELS } from '@/lib/project-format';
 import {
-  APPROACH_HINTS,
-  APPROACH_LABELS,
   CHANGE_LABELS,
   CONFIGURATION_LABELS,
   DEVELOPMENT_TEXT_LABELS,
@@ -54,6 +53,7 @@ export function ProjectManagementPlanEditor({
   const [input, setInput] = useState<ProjectManagementPlanInput>(initialInput);
   const patch = (changes: Partial<ProjectManagementPlanInput>) => setInput((current) => ({ ...current, ...changes }));
   const { lifeCycle, developmentApproach } = input;
+  const methodology = useCurrentProject()?.methodology;
 
   return (
     <EditorShell
@@ -116,15 +116,12 @@ export function ProjectManagementPlanEditor({
 
       <fieldset className="editor-section">
         <legend>Approche de développement</legend>
-        <div className="editor-grid editor-grid--fluid">
-          <Field label="Approche" hint={APPROACH_HINTS[developmentApproach.kind]}>
-            <SelectInput<DevelopmentApproachKind>
-              value={developmentApproach.kind}
-              onChange={(kind) => patch({ developmentApproach: { ...developmentApproach, kind } })}
-              options={options(APPROACH_LABELS)}
-            />
-          </Field>
-        </div>
+        {methodology && (
+          <p className="entry-form__ready" role="note">
+            Approche {METHODOLOGY_LABELS[methodology].toLowerCase()} : {METHODOLOGY_HINTS[methodology]} Elle se
+            choisit dans les informations du projet (portefeuille, « Modifier »).
+          </p>
+        )}
         <TextFields
           labels={DEVELOPMENT_TEXT_LABELS}
           values={developmentApproach}

@@ -70,6 +70,7 @@ import {
   saveDeliverablesBodySchema,
   saveTeamAssessmentBodySchema,
 } from '@infrastructure/adapters/in/http/schemas/save-closing-documents.schema';
+import { saveProductBacklogBodySchema } from '@infrastructure/adapters/in/http/schemas/save-product-backlog.schema';
 import { saveChangeLogBodySchema } from '@infrastructure/adapters/in/http/schemas/save-change-log.schema';
 import { saveProjectManagementPlanBodySchema } from '@infrastructure/adapters/in/http/schemas/save-project-management-plan.schema';
 import { saveCostEstimatesBodySchema } from '@infrastructure/adapters/in/http/schemas/save-cost-estimates.schema';
@@ -494,6 +495,15 @@ export async function buildServer(
       bodySchema: saveClosureReportBodySchema,
       get: container.getClosureReport,
       save: container.saveClosureReport,
+    }),
+  );
+  await app.register(
+    documentRoutes({
+      segment: 'backlog',
+      table: 'product_backlogs',
+      bodySchema: saveProductBacklogBodySchema,
+      get: container.getProductBacklog,
+      save: container.saveProductBacklog,
     }),
   );
   await app.register(

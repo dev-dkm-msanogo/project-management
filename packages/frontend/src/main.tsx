@@ -34,6 +34,7 @@ import '@/styles/performance.css';
 import '@/styles/approvals.css';
 import '@/styles/governance.css';
 import '@/styles/closing.css';
+import '@/styles/agile.css';
 import '@/styles/auth.css';
 
 const container = document.getElementById('root');

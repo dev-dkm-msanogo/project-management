@@ -203,6 +203,22 @@ pour la DSI de Dakar Mobilité. Interface en français, montants en **FCFA**.
   et leur disposition, livrables acceptés, leçons apprises ; transition vers l'exploitation
   (destinataires, éléments remis, formations, support, éléments reportés) et son acceptation datée.
   Soumis au circuit de validation : la version approuvée fige ces faits et **clôt le projet**.
+- **Méthodologie du projet** : choisie à la création (prédictive, hybride ou agile) et modifiable par le
+  chef de projet ; elle adapte le menu. Prédictive : WBS, dictionnaire, activités, réseau, Gantt,
+  références de l'échéancier et des coûts, avancement des tâches, valeur acquise, livrables. Agile :
+  carnet de produit, itérations, tableau de suivi, vélocité et burndown. Hybride : les deux. Tout le
+  reste (démarrage, parties prenantes, exigences, risques, finances, qualité, gouvernance, clôture) est
+  commun. Changer de méthodologie masque des menus sans rien supprimer. L'approche de développement du
+  plan de management lit cette méthodologie (elle ne s'y saisit plus).
+- **Module agile** : carnet de produit (épopées, récits, anomalies, éléments techniques ; priorité
+  MoSCoW, estimation en points de Fibonacci, critères d'acceptation, exigence satisfaite, ordre de
+  priorité modifiable), itérations sans chevauchement (objectif, capacité, revue, rétrospective et
+  actions), tableau de suivi (À faire, En cours, En revue, Terminé ; glisser-déposer ou flèches ; « Terminé »
+  date l'achèvement), indicateurs (burndown par jour ouvré, vélocité des itérations terminées et
+  moyenne des trois dernières, burnup, prévision du nombre d'itérations restantes). La définition de
+  « terminé » est celle du plan de management. **Lien hybride** : un élément rattaché à un lot de la
+  WBS en fait avancer le travail (points terminés sur points estimés) ; le lot ne se saisit plus à la
+  main et la valeur acquise, le portefeuille, les livrables et le rapport de clôture en tiennent compte.
 - **Registre des modifications** (templates « Change Log », « Change Request » et « Change Request
   Assessment », processus 39) : chaque demande porte ses catégories, sa description, sa
   justification, ses impacts par domaine (périmètre, qualité, exigences, coût, délai), le risque pour

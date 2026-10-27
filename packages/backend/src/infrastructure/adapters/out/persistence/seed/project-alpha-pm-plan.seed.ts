@@ -59,7 +59,6 @@ export function buildProjectAlphaManagementPlan(): ProjectManagementPlan {
         'Chaque phase se termine par une revue de passage avec le sponsor, le chef de projet et les parties prenantes clés. Décision : poursuivre, poursuivre sous conditions, suspendre ou arrêter ; elle est consignée dans le journal des décisions.',
     },
     developmentApproach: {
-      kind: 'HYBRID',
       selection:
         "Planification prédictive pour tenir le budget et la date de mise en production attendus par la direction ; itérations courtes pour la conception et le développement, où les besoins des dépôts se précisent en cours de route.",
       rationale:

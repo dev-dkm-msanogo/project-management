@@ -654,3 +654,39 @@ export function IconClosure() {
     </svg>
   );
 }
+
+export function IconBacklog() {
+  return (
+    <svg {...BASE}>
+      <path d="M8 6h12M8 12h12M8 18h12" />
+      <path d="M4 6h.01M4 12h.01M4 18h.01" />
+    </svg>
+  );
+}
+
+export function IconIterations() {
+  return (
+    <svg {...BASE}>
+      <path d="M20 12a8 8 0 1 1-2.3-5.6" />
+      <path d="M20 4v4h-4" />
+      <path d="M12 8v4l2.5 2" />
+    </svg>
+  );
+}
+
+export function IconBoard() {
+  return (
+    <svg {...BASE}>
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <path d="M9 4v16M15 4v16" />
+    </svg>
+  );
+}
+
+export function IconVelocity() {
+  return (
+    <svg {...BASE}>
+      <path d="M4 20V10M10 20V6M16 20v-8M22 20H2" />
+    </svg>
+  );
+}

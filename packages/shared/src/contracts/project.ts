@@ -3,6 +3,14 @@
 export type ProjectStatus = 'ACTIVE' | 'ON_HOLD' | 'CLOSED';
 
 /**
+ * Méthodologie du projet, choisie à sa création : elle adapte les outils de planification et de
+ * suivi proposés (WBS et échéancier, carnet de produit et itérations, ou les deux).
+ */
+export type ProjectMethodology = 'PREDICTIVE' | 'HYBRID' | 'ADAPTIVE';
+
+export const PROJECT_METHODOLOGIES: readonly ProjectMethodology[] = ['PREDICTIVE', 'HYBRID', 'ADAPTIVE'];
+
+/**
  * Rôle d'un membre dans un projet : le chef de projet gère l'équipe et rédige, le contributeur
  * rédige, le lecteur consulte.
  */
@@ -13,6 +21,7 @@ export interface ProjectRecordDto {
   name: string;
   description: string | null;
   status: ProjectStatus;
+  methodology: ProjectMethodology;
   createdAt: string;
   /** Droits de l'utilisateur sur ce projet (un administrateur a ceux d'un chef de projet). */
   access: ProjectRole;
@@ -23,6 +32,7 @@ export interface CreateProjectInput {
   name: string;
   description: string | null;
   status: ProjectStatus;
+  methodology: ProjectMethodology;
 }
 
 /** Modification : mêmes informations ; l'identifiant, cité par tous les documents, ne change pas. */

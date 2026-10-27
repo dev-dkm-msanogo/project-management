@@ -5,6 +5,7 @@ export const createProjectBodySchema = z.object({
   name: z.string().trim().min(1, 'Le nom du projet est requis.').max(120),
   description: z.string().trim().max(500).nullable(),
   status: z.enum(['ACTIVE', 'ON_HOLD', 'CLOSED']),
+  methodology: z.enum(['PREDICTIVE', 'HYBRID', 'ADAPTIVE']).default('PREDICTIVE'),
 });
 
 export type CreateProjectBody = z.infer<typeof createProjectBodySchema>;

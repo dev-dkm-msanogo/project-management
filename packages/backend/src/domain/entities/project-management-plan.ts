@@ -1,9 +1,6 @@
 import { DomainError } from '@domain/errors/domain-errors';
 import { assertProjectId, requiredText } from '@domain/value-objects/register-rules';
 
-export const DEVELOPMENT_APPROACH_KINDS = ['PREDICTIVE', 'ADAPTIVE', 'HYBRID'] as const;
-export type DevelopmentApproachKind = (typeof DEVELOPMENT_APPROACH_KINDS)[number];
-
 /** Rubriques rédigées de chaque composant, dans l'ordre du modèle. */
 export const DEVELOPMENT_TEXT_KEYS = [
   'selection',
@@ -27,7 +24,8 @@ export const CONFIGURATION_KEYS = [
 
 type Texts<K extends readonly string[]> = Record<K[number], string>;
 
-export type DevelopmentApproach = { kind: DevelopmentApproachKind } & Texts<typeof DEVELOPMENT_TEXT_KEYS>;
+/** Approche rédigée ; son type est la méthodologie du projet, portée par le projet. */
+export type DevelopmentApproach = Texts<typeof DEVELOPMENT_TEXT_KEYS>;
 export type ChangeManagement = Texts<typeof CHANGE_KEYS>;
 export type ConfigurationManagement = Texts<typeof CONFIGURATION_KEYS>;
 
@@ -80,10 +78,6 @@ export class ProjectManagementPlan {
     if (Number.isNaN(params.preparedOn.getTime())) {
       throw new DomainError('Date de préparation du plan de management invalide.');
     }
-    if (!(DEVELOPMENT_APPROACH_KINDS as readonly string[]).includes(params.developmentApproach.kind)) {
-      throw new DomainError(`Approche de développement inconnue : ${params.developmentApproach.kind}.`);
-    }
-
     const names = new Set<string>();
     const phases = params.lifeCycle.phases.map((phase, index) => {
       const name = requiredText(phase.name, `Nommez la phase n° ${index + 1} du cycle de vie.`);
@@ -103,10 +97,7 @@ export class ProjectManagementPlan {
           phases,
           gateReview: params.lifeCycle.gateReview.trim(),
         },
-        developmentApproach: {
-          kind: params.developmentApproach.kind,
-          ...trimmed(DEVELOPMENT_TEXT_KEYS, params.developmentApproach),
-        },
+        developmentApproach: trimmed(DEVELOPMENT_TEXT_KEYS, params.developmentApproach),
         changeManagement: trimmed(CHANGE_KEYS, params.changeManagement),
         configurationManagement: trimmed(CONFIGURATION_KEYS, params.configurationManagement),
       }),
@@ -119,10 +110,9 @@ export class ProjectManagementPlan {
 
   get drafted(): DraftedComponents {
     const { lifeCycle, developmentApproach, changeManagement, configurationManagement } = this.props;
-    const { kind: _kind, ...approachTexts } = developmentApproach;
     return {
       LIFE_CYCLE: lifeCycle.phases.length > 0 || lifeCycle.overview !== '',
-      DEVELOPMENT_APPROACH: written(approachTexts),
+      DEVELOPMENT_APPROACH: written(developmentApproach),
       CHANGE_MANAGEMENT: written(changeManagement),
       CONFIGURATION_MANAGEMENT: written(configurationManagement),
     };

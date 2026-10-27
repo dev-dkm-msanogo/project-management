@@ -1,3 +1,5 @@
+import type { ProjectMethodology } from '@shared/index';
+
 /**
  * Modèle de navigation aligné sur le PMBOK 8.
  *
@@ -71,7 +73,11 @@ export type AppView =
   | 'earned-value'
   | 'deliverables'
   | 'team'
-  | 'closure-report';
+  | 'closure-report'
+  | 'backlog'
+  | 'iterations'
+  | 'board'
+  | 'agile-metrics';
 
 /** Vues hors livrables PMBOK : portefeuille, administration, compte. */
 export type StandaloneView =
@@ -178,7 +184,13 @@ export interface PmbokOutput {
   fedBy: readonly number[];
   /** Vue de l'application qui outille l'output. */
   view: OutputView;
+  /** Méthodologies où l'output est proposé ; absent : toutes. */
+  methodologies?: readonly ProjectMethodology[];
 }
+
+/** Outils de l'approche prédictive (WBS, échéancier, valeur acquise) et de l'approche itérative. */
+const PREDICTIVE: readonly ProjectMethodology[] = ['PREDICTIVE', 'HYBRID'];
+const ITERATIVE: readonly ProjectMethodology[] = ['HYBRID', 'ADAPTIVE'];
 
 // Déclarés dans l'ordre du cycle de vie.
 export const PMBOK8_OUTPUTS: readonly PmbokOutput[] = [
@@ -232,9 +244,24 @@ export const PMBOK8_OUTPUTS: readonly PmbokOutput[] = [
     view: 'requirements-plan',
   },
   { id: 'requirements', label: 'Exigences et traçabilité', produced: [4], fedBy: [31, 32], view: 'requirements' },
+  {
+    id: 'product-backlog',
+    label: 'Carnet de produit',
+    produced: [4, 5],
+    fedBy: [31],
+    view: 'backlog',
+    methodologies: ITERATIVE,
+  },
   { id: 'scope-statement', label: 'Énoncé du périmètre', produced: [5], fedBy: [31], view: 'scope-statement' },
-  { id: 'wbs', label: 'Structure (WBS)', produced: [6], fedBy: [31], view: 'wbs' },
-  { id: 'wbs-dictionary', label: 'Dictionnaire de la WBS', produced: [6], fedBy: [31], view: 'wbs-dictionary' },
+  { id: 'wbs', label: 'Structure (WBS)', produced: [6], fedBy: [31], view: 'wbs', methodologies: PREDICTIVE },
+  {
+    id: 'wbs-dictionary',
+    label: 'Dictionnaire de la WBS',
+    produced: [6],
+    fedBy: [31],
+    view: 'wbs-dictionary',
+    methodologies: PREDICTIVE,
+  },
   {
     id: 'schedule-management-plan',
     label: "Plan de gestion de l'échéancier",
@@ -242,21 +269,44 @@ export const PMBOK8_OUTPUTS: readonly PmbokOutput[] = [
     fedBy: [],
     view: 'schedule-plan',
   },
-  { id: 'activity-list', label: 'Activités et durées', produced: [9], fedBy: [33], view: 'schedule-activities' },
-  { id: 'network-diagram', label: 'Réseau du projet', produced: [9], fedBy: [33], view: 'schedule-network' },
+  {
+    id: 'activity-list',
+    label: 'Activités et durées',
+    produced: [9],
+    fedBy: [33],
+    view: 'schedule-activities',
+    methodologies: PREDICTIVE,
+  },
+  {
+    id: 'network-diagram',
+    label: 'Réseau du projet',
+    produced: [9],
+    fedBy: [33],
+    view: 'schedule-network',
+    methodologies: PREDICTIVE,
+  },
   { id: 'milestone-list', label: 'Jalons et calendrier', produced: [9], fedBy: [33], view: 'schedule-milestones' },
-  { id: 'schedule', label: 'Échéancier (Gantt)', produced: [9], fedBy: [33], view: 'gantt' },
+  { id: 'schedule', label: 'Échéancier (Gantt)', produced: [9], fedBy: [33], view: 'gantt', methodologies: PREDICTIVE },
   {
     id: 'schedule-baseline',
     label: "Référence de l'échéancier",
     produced: [9],
     fedBy: [39],
     view: 'schedule-baseline',
+    methodologies: PREDICTIVE,
   },
+  { id: 'iterations', label: 'Itérations', produced: [9], fedBy: [33], view: 'iterations', methodologies: ITERATIVE },
   { id: 'financial-management-plan', label: 'Plan de gestion financière', produced: [10], fedBy: [], view: 'financial-plan' },
   { id: 'funding-strategy', label: 'Stratégie de financement', produced: [10], fedBy: [], view: 'funding-strategy' },
   { id: 'cost-estimates', label: 'Estimations des coûts', produced: [11], fedBy: [34], view: 'cost-estimates' },
-  { id: 'cost-baseline', label: 'Référence des coûts', produced: [12], fedBy: [34, 39], view: 'cost-baseline' },
+  {
+    id: 'cost-baseline',
+    label: 'Référence des coûts',
+    produced: [12],
+    fedBy: [34, 39],
+    view: 'cost-baseline',
+    methodologies: PREDICTIVE,
+  },
   {
     id: 'funding-requirements',
     label: 'Besoins de financement',
@@ -300,7 +350,8 @@ export const PMBOK8_OUTPUTS: readonly PmbokOutput[] = [
     view: 'project-management-plan',
   },
   // Exécution
-  { id: 'deliverables', label: 'Livrables', produced: [27], fedBy: [32], view: 'deliverables' },
+  { id: 'deliverables', label: 'Livrables', produced: [27], fedBy: [32], view: 'deliverables', methodologies: PREDICTIVE },
+  { id: 'task-board', label: 'Tableau de suivi', produced: [27], fedBy: [23], view: 'board', methodologies: ITERATIVE },
   { id: 'team', label: 'Équipe et affectations', produced: [22], fedBy: [23], view: 'team' },
   { id: 'issue-log', label: 'Journal des problèmes', produced: [27], fedBy: [30], view: 'issue-log' },
   {
@@ -309,6 +360,7 @@ export const PMBOK8_OUTPUTS: readonly PmbokOutput[] = [
     produced: [27],
     fedBy: [23, 33],
     view: 'task-progress',
+    methodologies: PREDICTIVE,
   },
   { id: 'actual-costs', label: 'Dépenses réelles', produced: [27], fedBy: [34], view: 'actual-costs' },
   {
@@ -341,6 +393,15 @@ export const PMBOK8_OUTPUTS: readonly PmbokOutput[] = [
     produced: [30],
     fedBy: [33, 34],
     view: 'earned-value',
+    methodologies: PREDICTIVE,
+  },
+  {
+    id: 'agile-metrics',
+    label: 'Vélocité et burndown',
+    produced: [30],
+    fedBy: [33],
+    view: 'agile-metrics',
+    methodologies: ITERATIVE,
   },
   { id: 'report', label: 'Rapport exécutif', produced: [30], fedBy: [31, 33, 34, 38, 39], view: 'report' },
   { id: 'change-log', label: 'Registre des modifications', produced: [39], fedBy: [], view: 'change-log' },
@@ -365,11 +426,22 @@ export interface NavSection extends ProcessGroup {
   outputs: PmbokOutput[];
 }
 
-/** Groupes de processus avec leurs outputs, dans l'ordre du cycle de vie. */
-export function navSections(): NavSection[] {
+/** L'output est-il proposé pour cette méthodologie ? */
+export function offeredFor(output: PmbokOutput, methodology: ProjectMethodology): boolean {
+  return !output.methodologies || output.methodologies.includes(methodology);
+}
+
+/** Vue disponible pour la méthodologie du projet (les vues hors livrables le sont toujours). */
+export function isViewOffered(view: AppView, methodology: ProjectMethodology): boolean {
+  const output = outputForView(view);
+  return !output || offeredFor(output, methodology);
+}
+
+/** Groupes de processus avec les outputs proposés pour la méthodologie, dans l'ordre du cycle de vie. */
+export function navSections(methodology: ProjectMethodology): NavSection[] {
   return PROCESS_GROUPS.map((group) => ({
     ...group,
-    outputs: PMBOK8_OUTPUTS.filter((output) => outputGroup(output) === group.id),
+    outputs: PMBOK8_OUTPUTS.filter((output) => outputGroup(output) === group.id && offeredFor(output, methodology)),
   }));
 }
 
@@ -468,6 +540,10 @@ export const VIEW_DESCRIPTIONS: Record<AppView, string> = {
   team: "Qui fait quoi dans le projet, quand et avec quelle charge, et l'évaluation de la performance de l'équipe.",
   'closure-report':
     "Bilan final du projet, transition du résultat vers l'exploitation et son acceptation ; son approbation clôt le projet.",
+  backlog: "Ce que le produit doit offrir, élément par élément, dans l'ordre de priorité : épopées, récits, estimations.",
+  iterations: "Itérations de l'équipe : objectif, engagement, burndown, revue et rétrospective.",
+  board: "Avancement des éléments de l'itération, du « À faire » au « Terminé ».",
+  'agile-metrics': "Rythme de l'équipe et reste à faire : vélocité, burndown, burnup et prévision d'achèvement.",
 };
 
 export function outputForView(view: AppView): PmbokOutput | undefined {

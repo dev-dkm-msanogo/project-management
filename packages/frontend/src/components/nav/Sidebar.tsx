@@ -1,8 +1,13 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
+import type { ProjectMethodology } from '@shared/index';
 import { useAuth } from '@/auth/AuthContext';
 import { AppBrand } from '@/components/brand/AppBrand';
 import {
   IconActualCosts,
+  IconBacklog,
+  IconBoard,
+  IconIterations,
+  IconVelocity,
   IconApprovals,
   IconAudit,
   IconAssumptions,
@@ -127,6 +132,10 @@ const VIEW_ICONS: Record<OutputView, ReactNode> = {
   deliverables: <IconDeliverables />,
   team: <IconTeam />,
   'closure-report': <IconClosure />,
+  backlog: <IconBacklog />,
+  iterations: <IconIterations />,
+  board: <IconBoard />,
+  'agile-metrics': <IconVelocity />,
 };
 
 /** Infobulle : processus PMBOK 8 qui produisent l'output. */
@@ -138,11 +147,13 @@ function producedHint(output: PmbokOutput): string {
 
 interface SidebarProps {
   active: AppView;
+  /** Méthodologie du projet courant : elle choisit les outils proposés. */
+  methodology: ProjectMethodology;
   onNavigate: (view: AppView) => void;
 }
 
 /** Menu latéral : portefeuille, puis les outputs du PMBOK 8 classés par groupe de processus. */
-export function Sidebar({ active, onNavigate }: SidebarProps) {
+export function Sidebar({ active, methodology, onNavigate }: SidebarProps) {
   const { canAdminister } = useAuth();
   const activeOutput = outputForView(active);
   const [expanded, setExpanded] = useState<ReadonlySet<ProcessGroupId>>(
@@ -250,7 +261,7 @@ export function Sidebar({ active, onNavigate }: SidebarProps) {
         </div>
 
         <div className="nav-groups">
-          {navSections().map((section) => {
+          {navSections(methodology).map((section) => {
             const isOpen = expanded.has(section.id);
             const listId = `nav-group-${section.id}`;
             return (

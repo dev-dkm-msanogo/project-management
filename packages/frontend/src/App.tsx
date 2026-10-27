@@ -57,11 +57,16 @@ import { TeamCharterFeature } from '@/features/TeamCharterFeature';
 import { TeamFeature } from '@/features/TeamFeature';
 import { DeliverablesFeature } from '@/features/DeliverablesFeature';
 import { ClosureReportFeature } from '@/features/ClosureReportFeature';
+import { AgileMetricsFeature } from '@/features/AgileMetricsFeature';
+import { BacklogFeature } from '@/features/BacklogFeature';
+import { BoardFeature } from '@/features/BoardFeature';
+import { IterationsFeature } from '@/features/IterationsFeature';
+import { CurrentProjectContext } from '@/hooks/useCurrentProject';
 import { UsersFeature } from '@/features/UsersFeature';
 import { WbsDictionaryFeature } from '@/features/WbsDictionaryFeature';
 import { WbsFeature } from '@/features/WbsFeature';
 import { useProjects } from '@/hooks/useProjects';
-import { viewTitle, type AppView } from '@/navigation/pmp';
+import { isViewOffered, viewTitle, type AppView } from '@/navigation/pmp';
 
 const DEFAULT_PROJECT_ID = 'project-alpha';
 
@@ -122,6 +127,12 @@ function AuthenticatedApp() {
 
   const currentProject = projects.find((project) => project.id === projectId);
   const projectName = currentProject?.name ?? '';
+  const methodology = currentProject?.methodology ?? 'PREDICTIVE';
+
+  // Page absente du menu de la méthodologie du projet (changement de projet ou de méthodologie) : rapport.
+  useEffect(() => {
+    if (currentProject && !isViewOffered(view, currentProject.methodology)) setView('report');
+  }, [currentProject, view]);
 
   const openProject = guarded((id: string) => {
     setProjectId(id);
@@ -138,7 +149,7 @@ function AuthenticatedApp() {
 
   return (
     <div className="layout">
-      <Sidebar active={view} onNavigate={navigate} />
+      <Sidebar active={view} methodology={methodology} onNavigate={navigate} />
 
       {/* Le rapport, plus étroit, impose sa largeur à l'en-tête de page. */}
       <div className={`content${view === 'report' ? ' content--narrow' : ''}`}>
@@ -153,6 +164,7 @@ function AuthenticatedApp() {
 
         <PageActionsSlot.Provider value={actionsSlot}>
           <ProjectRightsScope access={ACCOUNT_VIEWS.includes(view) ? null : (currentProject?.access ?? 'READER')}>
+            <CurrentProjectContext.Provider value={currentProject ?? null}>
             <main className="content__body">
               {view === 'projects' && (
                 <ProjectsFeature currentProjectId={projectId} onOpen={openProject} onReload={reload} />
@@ -260,7 +272,12 @@ function AuthenticatedApp() {
               {view === 'closure-report' && (
                 <ClosureReportFeature projectId={projectId} projectName={projectName} onNavigate={navigate} />
               )}
+              {view === 'backlog' && <BacklogFeature projectId={projectId} onNavigate={navigate} />}
+              {view === 'iterations' && <IterationsFeature projectId={projectId} onNavigate={navigate} />}
+              {view === 'board' && <BoardFeature projectId={projectId} onNavigate={navigate} />}
+              {view === 'agile-metrics' && <AgileMetricsFeature projectId={projectId} onNavigate={navigate} />}
             </main>
+            </CurrentProjectContext.Provider>
           </ProjectRightsScope>
         </PageActionsSlot.Provider>
       </div>

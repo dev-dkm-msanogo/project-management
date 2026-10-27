@@ -2,7 +2,6 @@ import type {
   ChangeManagementInput,
   ConfigurationManagementInput,
   DevelopmentApproachInput,
-  DevelopmentApproachKind,
   PlanComponentKey,
   ProjectManagementPlanDto,
   ProjectManagementPlanInput,
@@ -14,19 +13,7 @@ import type { AppView } from '@/navigation/pmp';
 
 export type PlanTab = 'overview' | 'baselines' | 'life-cycle' | 'approach' | 'change' | 'configuration';
 
-export const APPROACH_LABELS: Record<DevelopmentApproachKind, string> = {
-  PREDICTIVE: 'Prédictive',
-  ADAPTIVE: 'Adaptative',
-  HYBRID: 'Hybride',
-};
-
-export const APPROACH_HINTS: Record<DevelopmentApproachKind, string> = {
-  PREDICTIVE: 'Périmètre, délais et coûts fixés en amont, livraison en fin de projet.',
-  ADAPTIVE: 'Livraisons par itérations courtes, besoins précisés au fil du projet.',
-  HYBRID: 'Gouvernance prédictive, conception et réalisation itératives.',
-};
-
-type DevelopmentTextKey = Exclude<keyof DevelopmentApproachInput, 'kind'>;
+type DevelopmentTextKey = keyof DevelopmentApproachInput;
 
 export const DEVELOPMENT_TEXT_LABELS: Record<DevelopmentTextKey, string> = {
   selection: "Choix de l'approche",
@@ -125,7 +112,7 @@ export function blankProjectManagementPlan(): ProjectManagementPlanInput {
   return {
     preparedOn: todayIso(),
     lifeCycle: { overview: '', phases: [], gateReview: '' },
-    developmentApproach: { kind: 'PREDICTIVE', ...blankTexts(DEVELOPMENT_TEXT_LABELS) },
+    developmentApproach: blankTexts(DEVELOPMENT_TEXT_LABELS),
     changeManagement: blankTexts(CHANGE_LABELS),
     configurationManagement: blankTexts(CONFIGURATION_LABELS),
   };
@@ -133,5 +120,7 @@ export function blankProjectManagementPlan(): ProjectManagementPlanInput {
 
 export function projectManagementPlanDtoToInput(dto: ProjectManagementPlanDto): ProjectManagementPlanInput {
   const { projectId: _projectId, references: _references, components: _components, baselines: _baselines, ...input } = dto;
-  return structuredClone(input);
+  // Le type d'approche est la méthodologie du projet : il ne se saisit pas dans le plan.
+  const { kind: _kind, ...developmentApproach } = input.developmentApproach;
+  return structuredClone({ ...input, developmentApproach });
 }
