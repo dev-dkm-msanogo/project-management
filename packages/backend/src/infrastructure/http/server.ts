@@ -107,6 +107,7 @@ export async function buildServer(
 ): Promise<FastifyInstance> {
   const app = Fastify({
     logger: env.NODE_ENV !== 'test',
+    trustProxy: env.TRUST_PROXY,
   });
   const isProduction = env.NODE_ENV === 'production';
 

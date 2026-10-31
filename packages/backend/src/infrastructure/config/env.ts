@@ -8,6 +8,8 @@ const envSchema = z.object({
   // Port propre à l'API, prioritaire sur PORT (qu'un outil peut imposer à tout le processus).
   API_PORT: z.coerce.number().int().positive().optional(),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
+  // Derrière un relais (nginx en conteneur) : l'IP cliente vient de X-Forwarded-For (limitation de débit).
+  TRUST_PROXY: z.enum(['true', 'false']).default('false').transform((value) => value === 'true'),
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(100),
   RATE_LIMIT_WINDOW: z.string().default('1 minute'),
   // Persistance : si défini, PostgreSQL ; sinon repli en mémoire.

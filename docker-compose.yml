@@ -1,7 +1,10 @@
-# Base de données PostgreSQL pour le développement local.
-# Démarrage : docker compose up -d
-# Port hôte 5433 (évite tout conflit avec un PostgreSQL déjà installé sur 5432).
-# Puis dans packages/backend/.env : DATABASE_URL=postgres://gdp:gdp@localhost:5433/gdp
+# Application complète en conteneurs : base PostgreSQL, API et frontend.
+#
+# Tout lancer     : docker compose up -d --build   → http://localhost:8080
+# Base seule (dev): docker compose up -d db        → puis npm run dev
+#
+# Secret JWT : lu dans packages/backend/.env (JWT_SECRET), obligatoire car l'API tourne en production.
+# Port hôte 5433 pour la base (évite tout conflit avec un PostgreSQL déjà installé sur 5432).
 services:
   db:
     image: postgres:16-alpine
@@ -20,6 +23,45 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    container_name: gdp-api
+    restart: unless-stopped
+    env_file:
+      - path: packages/backend/.env
+        required: false
+    # Valeurs propres au conteneur, prioritaires sur packages/backend/.env.
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      API_PORT: 3001
+      DATABASE_URL: postgres://gdp:gdp@db:5432/gdp
+      CORS_ORIGIN: http://localhost:8080
+      TRUST_PROXY: 'true'
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:3001/health || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+    container_name: gdp-web
+    restart: unless-stopped
+    ports:
+      - '8080:80'
+    depends_on:
+      api:
+        condition: service_healthy
 
 volumes:
   gdp_pgdata:

@@ -409,11 +409,31 @@ Règle de dépendance (vers l'intérieur) : `infrastructure → application → 
 
 ## Démarrage
 
+### Tout en conteneurs
+
+Prérequis : **Docker**.
+
+```bash
+cp packages/backend/.env.example packages/backend/.env
+docker compose up -d --build
+```
+
+Dans `packages/backend/.env`, générer un `JWT_SECRET` fort (commande indiquée dans le fichier) :
+l'API tourne en production dans son conteneur et refuse de démarrer sans lui.
+
+- Application : http://localhost:8080 (nginx sert le frontend et relaie `/api` vers l'API)
+- Arrêt : `docker compose down` (les données restent dans le volume `gdp_pgdata`)
+
+Le cookie de session étant `Secure` en production, l'accès depuis une autre machine du réseau
+exige HTTPS devant nginx ; `localhost` fonctionne en HTTP.
+
+### En développement
+
 Prérequis : **Node.js ≥ 20** et **Docker** (pour PostgreSQL).
 
 ```bash
 npm install
-docker compose up -d
+docker compose up -d db
 cp packages/backend/.env.example packages/backend/.env
 npm run dev
 ```
