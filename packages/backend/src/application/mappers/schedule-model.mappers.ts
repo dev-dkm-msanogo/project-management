@@ -1,3 +1,4 @@
+import type { CharterMilestoneStatus } from '@domain/entities/charter-milestones';
 import { estimatedDays, ScheduleModel } from '@domain/entities/schedule-model';
 import { WbsDictionary } from '@domain/entities/wbs-dictionary';
 import { isoDate, isoDateOrNull, parseIsoDate, parseIsoDateOrNull } from '@application/mappers/iso-date';
@@ -29,6 +30,7 @@ export function scheduleModelToInput(model: ScheduleModel): ScheduleModelInput {
       ...milestone,
       targetDate: isoDate(milestone.targetDate),
       achievedOn: milestone.achievedOn ? isoDate(milestone.achievedOn) : null,
+      charterCode: milestone.charterCode ?? null,
     })),
     calendar: {
       workingWeekdays: [...props.calendar.workingWeekdays],
@@ -68,10 +70,21 @@ export function toScheduleModelDto(
   model: ScheduleModel,
   wbsNames: Record<string, string>,
   wbsDates: ScheduledWbsDto,
+  charterMilestones: readonly CharterMilestoneStatus[],
 ): ScheduleModelDto {
   return {
     projectId: model.projectId,
     ...scheduleModelToInput(model),
+    charterMilestones: charterMilestones.map((status) => ({
+      code: status.code,
+      name: status.name,
+      approvedDate: isoDate(status.approvedDate),
+      milestoneCode: status.milestoneCode,
+      plannedDate: isoDateOrNull(status.plannedDate),
+      achievedOn: isoDateOrNull(status.achievedOn),
+      varianceDays: status.varianceDays,
+      state: status.state,
+    })),
     wbsNames,
     network: toScheduleNetworkDto(model),
     wbsDates,

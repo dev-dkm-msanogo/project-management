@@ -70,6 +70,8 @@ export interface ScheduleMilestoneInput {
   targetDate: string;
   /** Date à laquelle le jalon a été atteint ; `null` : pas encore. */
   achievedOn: string | null;
+  /** Jalon de la charte que ce jalon réalise (code) ; `null` : aucun. */
+  charterCode: string | null;
 }
 
 export interface HolidayInput {
@@ -127,8 +129,27 @@ export interface ScheduleNetworkDto {
 /** Dates fixées par le réseau pour les éléments de la WBS qui portent des activités. */
 export type ScheduledWbsDto = Record<string, { start: string; end: string }>;
 
+/** Situation d'un jalon de la charte face au calendrier : non planifié, dans les temps, en avance, en retard ou atteint. */
+export type CharterMilestoneState = 'UNPLANNED' | 'ON_TRACK' | 'EARLY' | 'LATE' | 'ACHIEVED';
+
+/** Jalon de la charte (date approuvée) et jalon du calendrier qui le réalise, avec l'écart en jours. */
+export interface CharterMilestoneStatusDto {
+  code: string;
+  name: string;
+  approvedDate: string;
+  /** Jalon du calendrier qui le réalise ; `null` : non planifié. */
+  milestoneCode: string | null;
+  plannedDate: string | null;
+  achievedOn: string | null;
+  /** Date atteinte (sinon prévue) moins date approuvée ; positif : en retard. */
+  varianceDays: number | null;
+  state: CharterMilestoneState;
+}
+
 export interface ScheduleModelDto extends ScheduleModelInput {
   projectId: string;
+  /** Jalons de la charte et leur réalisation dans le calendrier, par date approuvée. */
+  charterMilestones: CharterMilestoneStatusDto[];
   /** Intitulés des éléments de la WBS liés, lus dans l'échéancier. */
   wbsNames: Record<string, string>;
   network: ScheduleNetworkDto;

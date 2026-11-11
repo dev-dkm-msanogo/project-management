@@ -21,7 +21,7 @@ export function charterToInput(charter: ProjectCharter): ProjectCharterInput {
     requirements: [...props.requirements],
     highLevelRisks: [...props.highLevelRisks],
     objectives: props.objectives.map((item) => ({ ...item })),
-    milestones: props.milestones.map((item) => ({ name: item.name, targetDate: isoDate(item.targetDate) })),
+    milestones: props.milestones.map((item) => ({ code: item.code, name: item.name, targetDate: isoDate(item.targetDate) })),
     budget: { amount: props.budget.amount, currency: props.budget.currency },
     sponsor: { ...props.sponsor },
     projectManager: { resourceId: props.projectManager.resourceId, authority: { ...props.projectManager.authority } },
@@ -34,7 +34,7 @@ export function inputToCharter(projectId: string, input: ProjectCharterInput): P
     ...input,
     projectId,
     preparedOn: parseIsoDate(input.preparedOn),
-    milestones: input.milestones.map((item) => ({ name: item.name, targetDate: parseIsoDate(item.targetDate) })),
+    milestones: input.milestones.map((item) => ({ code: item.code, name: item.name, targetDate: parseIsoDate(item.targetDate) })),
     budget: Money.of(input.budget.amount, input.budget.currency),
   });
 }

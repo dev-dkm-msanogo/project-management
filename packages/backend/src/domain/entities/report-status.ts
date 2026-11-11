@@ -1,3 +1,5 @@
+import { charterVarianceDays } from '@domain/entities/charter-milestones';
+import type { CharterMilestone } from '@domain/entities/project-charter';
 import type { ChangeLog } from '@domain/entities/change-log';
 import type { IssueLog } from '@domain/entities/issue-log';
 import type { TaskTracking } from '@domain/entities/plan-progress';
@@ -170,6 +172,8 @@ export function costStatus(
 export interface MilestoneView {
   code: string;
   name: string;
+  /** Jalon de la charte réalisé et écart en jours avec sa date approuvée. */
+  charter: { code: string; varianceDays: number } | null;
   planned: Date;
   /** Atteint à la date d'état ; une atteinte postérieure ne compte pas encore. */
   actual: Date | null;
@@ -180,7 +184,11 @@ export interface MilestoneView {
  * 3. Jalons à la date d'état : atteints, en retard (date cible dépassée sans être atteints), le
  * prochain (en cours), puis à venir.
  */
-export function milestoneStatuses(milestones: readonly ScheduleMilestone[], statusDate: Date): MilestoneView[] {
+export function milestoneStatuses(
+  milestones: readonly ScheduleMilestone[],
+  statusDate: Date,
+  charter: readonly CharterMilestone[] = [],
+): MilestoneView[] {
   const sorted = [...milestones].sort((a, b) => a.targetDate.getTime() - b.targetDate.getTime());
   let nextFound = false;
   return sorted.map((milestone) => {
@@ -192,7 +200,15 @@ export function milestoneStatuses(milestones: readonly ScheduleMilestone[], stat
       state = 'IN_PROGRESS';
       nextFound = true;
     } else state = 'NOT_STARTED';
-    return { code: milestone.code, name: milestone.name, planned: milestone.targetDate, actual: achieved, state };
+    const approved = charter.find((item) => item.code.toUpperCase() === milestone.charterCode?.toUpperCase());
+    return {
+      code: milestone.code,
+      name: milestone.name,
+      charter: approved ? { code: approved.code, varianceDays: charterVarianceDays(approved.targetDate, milestone) } : null,
+      planned: milestone.targetDate,
+      actual: achieved,
+      state,
+    };
   });
 }
 

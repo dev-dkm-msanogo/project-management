@@ -5,6 +5,7 @@ import type {
   DurationBasisInput,
   DurationMethod,
   EffortType,
+  CharterMilestoneState,
   MilestoneType,
   ScheduleModelDto,
   ScheduleModelInput,
@@ -50,6 +51,22 @@ export const MILESTONE_TYPE_LABELS: Record<MilestoneType, string> = {
 };
 
 export const MILESTONE_TYPES = Object.keys(MILESTONE_TYPE_LABELS) as MilestoneType[];
+
+export const CHARTER_MILESTONE_STATE_LABELS: Record<CharterMilestoneState, string> = {
+  UNPLANNED: 'Non planifié',
+  ON_TRACK: 'Dans les temps',
+  EARLY: 'En avance',
+  LATE: 'En retard',
+  ACHIEVED: 'Atteint',
+};
+
+export const CHARTER_MILESTONE_STATE_MODIFIERS: Record<CharterMilestoneState, 'amber' | 'green' | 'blue' | 'red'> = {
+  UNPLANNED: 'amber',
+  ON_TRACK: 'green',
+  EARLY: 'blue',
+  LATE: 'red',
+  ACHIEVED: 'green',
+};
 
 export const WEEKDAY_LABELS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'] as const;
 

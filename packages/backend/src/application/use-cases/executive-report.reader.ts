@@ -48,7 +48,7 @@ export function executiveReportReader(sources: ReportSources) {
   return async (report: ExecutiveStatusReport): Promise<ExecutiveStatusReportDto> => {
     const projectId = report.projectId;
     const statusDate = report.reportDate;
-    const [project, plan, measured, measures, actuals, risks, requirements, model, changes, issues, approvedBudget, estimates] =
+    const [project, plan, measured, measures, actuals, risks, requirements, model, changes, issues, approvedBudget, estimates, charter] =
       await Promise.all([
         sources.projects.findById(projectId),
         sources.plans.findByProjectId(projectId),
@@ -62,6 +62,7 @@ export function executiveReportReader(sources: ReportSources) {
         loadOrEmpty(sources.issueLogs, projectId, IssueLog.empty),
         charterBudget(sources.charters, projectId),
         sources.estimates.findByProjectId(projectId),
+        sources.charters.findByProjectId(projectId),
       ]);
 
     // Avancement et retards évalués à la date du rapport.
@@ -88,7 +89,7 @@ export function executiveReportReader(sources: ReportSources) {
       progressMeasuredOn: lastMeasure,
       progressStale: plan !== null && (!lastMeasure || day(lastMeasure) < day(report.reportingPeriod.from)),
       computedRag: overallRag([scope.rag, schedule.rag, cost.rag]),
-      milestones: model ? milestoneStatuses(model.props.milestones, statusDate) : [],
+      milestones: model ? milestoneStatuses(model.props.milestones, statusDate, charter?.props.milestones ?? []) : [],
       scope,
       schedule,
       cost,

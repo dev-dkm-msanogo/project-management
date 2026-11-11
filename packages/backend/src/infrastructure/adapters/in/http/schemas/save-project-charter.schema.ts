@@ -31,7 +31,16 @@ export const saveProjectCharterBodySchema = z.object({
       }),
     )
     .max(20),
-  milestones: z.array(z.object({ name: text(200), targetDate: isoDate })).max(30),
+  milestones: z
+    .array(
+      z.object({
+        // Vide : le serveur attribue le code (JC-001, JC-002…).
+        code: z.string().trim().max(20).regex(/^[A-Za-z0-9-]*$/, 'Code invalide (lettres, chiffres, tirets).').default(''),
+        name: text(200),
+        targetDate: isoDate,
+      }),
+    )
+    .max(30),
   budget: z.object({
     amount: z.number().finite().min(0),
     currency: z.string().regex(/^[A-Za-z]{3}$/),

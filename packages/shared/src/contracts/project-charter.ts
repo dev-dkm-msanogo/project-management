@@ -20,6 +20,8 @@ export interface CharterObjectiveInput {
 }
 
 export interface CharterMilestoneInput {
+  /** Identifiant stable (ex. « JC-001 ») : le calendrier le cite pour réaliser ce jalon. Attribué s'il est vide. */
+  code: string;
   name: string;
   targetDate: string;
 }

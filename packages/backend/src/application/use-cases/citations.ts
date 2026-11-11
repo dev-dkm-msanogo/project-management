@@ -118,3 +118,10 @@ export const requirementsCitedByBacklog =
     ((await backlogs.findByProjectId(projectId))?.items ?? []).flatMap((item) =>
       cite(item.props.requirementCode, 'le carnet de produit', item.code),
     );
+
+export const charterMilestonesCitedBySchedule =
+  (models: ProjectDocumentRepository<ScheduleModel>): CitationSource =>
+  async (projectId) =>
+    ((await models.findByProjectId(projectId))?.props.milestones ?? []).flatMap((milestone) =>
+      cite(milestone.charterCode ?? null, 'les jalons et le calendrier', milestone.code),
+    );

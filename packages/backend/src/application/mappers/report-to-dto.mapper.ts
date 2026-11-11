@@ -129,6 +129,8 @@ export function toExecutiveStatusReportDto(report: ExecutiveStatusReport, facts:
       planned: isoDate(milestone.planned),
       actual: isoDateOrNull(milestone.actual),
       status: milestone.state,
+      charterCode: milestone.charter?.code ?? null,
+      charterVarianceDays: milestone.charter?.varianceDays ?? null,
     })),
     scope: facts.scope,
     schedule: facts.schedule,

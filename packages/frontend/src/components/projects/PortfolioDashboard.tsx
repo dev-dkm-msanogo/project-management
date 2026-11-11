@@ -114,7 +114,10 @@ export function PortfolioDashboard({ projects, currentProjectId, onOpen, actions
                       {project.overdueTasks > 0 && <li>{project.overdueTasks} tâche(s) en retard</li>}
                       {project.criticalRisks > 0 && <li>{project.criticalRisks} risque(s) critique(s)</li>}
                       {project.openIssues > 0 && <li>{project.openIssues} problème(s) ouvert(s)</li>}
-                      {project.overdueTasks + project.criticalRisks + project.openIssues === 0 && (
+                      {project.charterMilestoneAlerts > 0 && (
+                        <li>{project.charterMilestoneAlerts} jalon(s) de la charte à suivre</li>
+                      )}
+                      {project.overdueTasks + project.criticalRisks + project.openIssues + project.charterMilestoneAlerts === 0 && (
                         <li className="portfolio-alerts__none">Aucune</li>
                       )}
                     </ul>

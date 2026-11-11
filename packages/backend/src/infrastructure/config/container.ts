@@ -130,6 +130,7 @@ import {
   wbsCitedByDeliverables,
   requirementsCitedByBacklog,
   wbsCitedByBacklog,
+  charterMilestonesCitedBySchedule,
 } from '@application/use-cases/citations';
 import { ProductBacklog } from '@domain/entities/product-backlog';
 import { inputToProductBacklog, productBacklogToInput } from '@application/mappers/product-backlog.mappers';
@@ -862,7 +863,11 @@ function lockedRepositories(repos: Repositories) {
     fundingStrategies: lock(repos.fundingStrategies, plan, fundingStrategyToInput),
     scheduleModels: lock(repos.scheduleModels, plan, (model) => {
       const input = scheduleModelToInput(model);
-      return { ...input, milestones: input.milestones.map(({ achievedOn: _achievedOn, ...milestone }) => milestone) };
+      // Jalons atteints et jalon de la charte réalisé relèvent du suivi : ils restent saisissables.
+      return {
+        ...input,
+        milestones: input.milestones.map(({ achievedOn: _achievedOn, charterCode: _charterCode, ...milestone }) => milestone),
+      };
     }),
     plans: lockedRepository(repos.plans, repos.approvals, {
       subject: plan,
@@ -1020,7 +1025,7 @@ function wireUseCases(stores: Repositories, hasher: PasswordHasher): AppContaine
   const ids = new CryptoIdGenerator();
   const engagement = engagementPlanServices(repos.stakeholders);
   const issues = issueLogServices(repos.risks, repos.changeLogs);
-  const schedule = scheduleModelServices(repos.plans);
+  const schedule = scheduleModelServices(repos.plans, repos.charters);
   const dictionary = wbsDictionaryServices(repos.plans, repos.scheduleModels, repos.costEstimates);
   const mapping = stakeholderMappingServices(repos.stakeholders);
   const qualityReport = qualityReportServices(repos.qualityMetrics);
@@ -1049,6 +1054,12 @@ function wireUseCases(stores: Repositories, hasher: PasswordHasher): AppContaine
     wbsCitedByDeliverables(repos.deliverables),
     wbsCitedByBacklog(repos.productBacklogs),
   ]);
+  // Un jalon de la charte que le calendrier réalise ne se retire pas de la charte.
+  const charterMilestoneGuard = referenceGuard(
+    repos.charters,
+    (charter) => charter.props.milestones.map((milestone) => milestone.code),
+    [charterMilestonesCitedBySchedule(repos.scheduleModels)],
+  );
   const requirementGuard = referenceGuard(
     repos.requirements,
     (register) => register.requirements.map((requirement) => requirement.code),
@@ -1214,7 +1225,9 @@ function wireUseCases(stores: Repositories, hasher: PasswordHasher): AppContaine
     getRiskRegister: new GetRiskRegisterService(repos.risks),
     saveRiskRegister: new SaveRiskRegisterService(checked.risks, riskGuard.beforeSave),
     getProjectCharter: new GetProjectCharterService(repos.charters, repos.stakeholders, repos.assumptions),
-    saveProjectCharter: new SaveProjectCharterService(locked.charters, repos.stakeholders, repos.assumptions),
+    saveProjectCharter: new SaveProjectCharterService(locked.charters, repos.stakeholders, repos.assumptions, (charter) =>
+      charterMilestoneGuard.beforeSave(charter.projectId, charter),
+    ),
     getStakeholderRegister: new GetStakeholderRegisterService(repos.stakeholders),
     saveStakeholderRegister: new SaveStakeholderRegisterService(repos.stakeholders, stakeholderGuard.beforeSave),
     getAssumptionLog: new GetAssumptionLogService(repos.assumptions),
@@ -1542,13 +1555,14 @@ function wireUseCases(stores: Repositories, hasher: PasswordHasher): AppContaine
         risks: repos.risks,
         issueLogs: repos.issueLogs,
         scheduleModels: repos.scheduleModels,
+        charters: repos.charters,
         reportDto,
       },
       access,
       clock,
     ),
     deleteDocument: {
-      charters: new DeleteProjectDocumentService(locked.charters),
+      charters: new DeleteProjectDocumentService(locked.charters, charterMilestoneGuard.beforeDelete),
       businessCases: new DeleteProjectDocumentService(locked.businessCases),
       benefitsPlans: new DeleteProjectDocumentService(locked.benefitsPlans),
       responsibilityMatrices: new DeleteProjectDocumentService(repos.responsibilityMatrices),

@@ -52,6 +52,9 @@ export interface MilestoneDto {
   planned: string | null;
   actual: string | null;
   status: MilestoneState;
+  /** Jalon de la charte réalisé (code) et écart en jours avec sa date approuvée ; absents des rapports publiés avant ce suivi. */
+  charterCode?: string | null;
+  charterVarianceDays?: number | null;
 }
 
 /** 4 & 5. Ventilation d'une dimension (périmètre / planning). */

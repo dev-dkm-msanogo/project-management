@@ -3,7 +3,7 @@ import type {
   MilestoneState,
 } from '@shared/contracts/executive-status-report';
 import { SectionCard } from '@/components/ui/SectionCard';
-import { formatMonthDay } from '@/lib/format';
+import { formatDaysSigned, formatMonthDay } from '@/lib/format';
 
 const STATUS_CONFIG: Record<
   MilestoneState,
@@ -47,7 +47,14 @@ export function KeyMilestones({ milestones }: { milestones: MilestoneDto[] }) {
         <tbody>
           {milestones.map((milestone) => (
             <tr key={milestone.code ?? milestone.name}>
-              <td>{milestone.name}</td>
+              <td>
+                {milestone.name}
+                {!!milestone.charterVarianceDays && (
+                  <span className="milestone-charter">
+                    Charte : {formatDaysSigned(milestone.charterVarianceDays)}
+                  </span>
+                )}
+              </td>
               <td>{formatMonthDay(milestone.planned)}</td>
               <td>{formatMonthDay(milestone.actual)}</td>
               <td>

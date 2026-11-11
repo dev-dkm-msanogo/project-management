@@ -93,3 +93,14 @@
     gap: 4px;
   }
 }
+
+/* --- Jalons de la charte --- */
+.register-table--charter-milestones {
+  min-width: 760px;
+}
+
+.milestone-charter {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}

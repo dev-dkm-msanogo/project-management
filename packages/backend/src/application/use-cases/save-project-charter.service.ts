@@ -20,10 +20,13 @@ export class SaveProjectCharterService implements SaveProjectCharterUseCase {
     private readonly charters: ProjectCharterRepository,
     private readonly stakeholders: StakeholderRegisterRepository,
     private readonly assumptions: AssumptionLogRepository,
+    /** Contrôle avant enregistrement : un jalon de la charte cité par le calendrier ne se retire pas. */
+    private readonly beforeSave?: (charter: ReturnType<typeof inputToCharter>) => Promise<void>,
   ) {}
 
   async execute(command: SaveProjectCharterCommand): Promise<ProjectCharterDto> {
     const charter = inputToCharter(command.projectId, command.input);
+    await this.beforeSave?.(charter);
     await this.charters.save(charter);
     const [stakeholders, assumptions] = await Promise.all([
       loadOrEmpty(this.stakeholders, command.projectId, StakeholderRegister.empty),

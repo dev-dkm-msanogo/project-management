@@ -1,3 +1,5 @@
+import { charterMilestoneStatuses, isCharterMilestoneAlert } from '@domain/entities/charter-milestones';
+import type { ProjectCharter } from '@domain/entities/project-charter';
 import type { ActualCosts } from '@domain/entities/actual-costs';
 import { ActualCosts as ActualCostsRegister } from '@domain/entities/actual-costs';
 import { CostBaseline } from '@domain/entities/cost-baseline';
@@ -288,6 +290,7 @@ interface PortfolioSources extends PerformanceSources {
   risks: RiskRegisterRepository;
   issueLogs: ProjectDocumentRepository<IssueLog>;
   scheduleModels: ProjectDocumentRepository<ScheduleModel>;
+  charters: ProjectDocumentRepository<ProjectCharter>;
   /** Rapport exécutif du dernier mois : sa santé (figée s'il est publié, sinon calculée ou ajustée). */
   reportDto: (report: ExecutiveStatusReport) => Promise<ExecutiveStatusReportDto>;
 }
@@ -317,13 +320,14 @@ export class GetPortfolioService {
   ): Promise<PortfolioProjectDto> {
     const today = this.clock();
     const { sources } = this;
-    const [plan, measured, report, risks, issues, model] = await Promise.all([
+    const [plan, measured, report, risks, issues, model, charter] = await Promise.all([
       sources.plans.findByProjectId(projectId),
       measureProject(sources, projectId, today),
       sources.reports.findLatest(projectId),
       loadOrEmpty(sources.risks, projectId, RiskRegister.empty),
       loadOrEmpty(sources.issueLogs, projectId, IssueLog.empty),
       sources.scheduleModels.findByProjectId(projectId),
+      sources.charters.findByProjectId(projectId),
     ]);
     const tracking = plan ? trackPlan(plan, await sources.progress.listByProject(projectId), today) : [];
     const leaves = tracking.filter((item) => item.isLeaf);
@@ -355,6 +359,9 @@ export class GetPortfolioService {
       openRisks: openRisks.length,
       criticalRisks: openRisks.filter((risk) => risk.level === 'CRITICAL').length,
       openIssues: issues.issues.filter((issue) => issue.isOpen).length,
+      charterMilestoneAlerts: charterMilestoneStatuses(charter?.props.milestones ?? [], model?.props.milestones ?? []).filter(
+        isCharterMilestoneAlert,
+      ).length,
       nextMilestone: nextMilestone(model, today),
     };
   }

@@ -226,6 +226,15 @@ pour la DSI de Dakar Mobilité. Interface en français, montants en **FCFA**.
   fait avancer le travail jusqu'à la revue. Sans Product Owner désigné, le chef de projet décide. Le
   serveur contrôle chaque enregistrement du carnet au regard de ces droits (403 sinon) ; les décisions
   passent par `POST /projects/:id/backlog/:code/decision` et figurent au journal d'audit.
+- **Jalons de la charte et calendrier** : chaque jalon de la charte porte un code (JC-001…, attribué à
+  l'enregistrement s'il est vide) ; un jalon du calendrier désigne celui qu'il réalise (un seul jalon du
+  calendrier par jalon de la charte, code vérifié). La page « Jalons et calendrier » affiche, pour chaque
+  jalon de la charte, la date de la charte, le jalon qui le réalise, la date prévue (ou atteinte), l'écart en
+  jours et la situation (non planifié, dans les temps, en avance, en retard, atteint). Le portefeuille
+  signale les jalons de la charte en retard ou non planifiés, et le rapport exécutif indique l'écart avec la
+  charte sur les jalons concernés. Un jalon de la charte cité par le calendrier ne se retire pas de la charte
+  (409). La date de la charte reste celle qui a été approuvée : le lien se saisit même une fois le plan de
+  management approuvé, comme les jalons atteints.
 - **Registre des modifications** (templates « Change Log », « Change Request » et « Change Request
   Assessment », processus 39) : chaque demande porte ses catégories, sa description, sa
   justification, ses impacts par domaine (périmètre, qualité, exigences, coût, délai), le risque pour

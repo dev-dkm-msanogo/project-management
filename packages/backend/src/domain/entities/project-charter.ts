@@ -1,6 +1,12 @@
 import { DomainError } from '@domain/errors/domain-errors';
 import type { Money } from '@domain/value-objects/money';
-import { assertProjectId, optionalText, requiredText } from '@domain/value-objects/register-rules';
+import {
+  assertProjectId,
+  assertUniqueCodes,
+  entryCode,
+  optionalText,
+  requiredText,
+} from '@domain/value-objects/register-rules';
 
 export const OBJECTIVE_CATEGORIES = ['SCOPE', 'SCHEDULE', 'COST', 'OTHER'] as const;
 export type ObjectiveCategory = (typeof OBJECTIVE_CATEGORIES)[number];
@@ -15,6 +21,7 @@ export interface CharterObjective {
 }
 
 export interface CharterMilestone {
+  code: string;
   name: string;
   targetDate: Date;
 }
@@ -69,7 +76,12 @@ function validDate(date: Date, label: string): Date {
 export class ProjectCharter {
   private constructor(readonly props: Readonly<ProjectCharterProps>) {}
 
-  static create(params: ProjectCharterProps): ProjectCharter {
+  /** Saisie : un jalon sans code en reçoit un (JC-001, JC-002…), jamais deux fois le même. */
+  static create(
+    params: Omit<ProjectCharterProps, 'milestones'> & {
+      milestones: readonly (Omit<CharterMilestone, 'code'> & { code?: string })[];
+    },
+  ): ProjectCharter {
     assertProjectId(params.projectId);
     if (params.overallRiskLevel !== null && !(OVERALL_RISK_LEVELS as readonly string[]).includes(params.overallRiskLevel)) {
       throw new DomainError(`Niveau de risque global invalide : "${params.overallRiskLevel}".`);
@@ -91,10 +103,21 @@ export class ProjectCharter {
         ),
       };
     });
+    const taken = new Set(params.milestones.map((item) => item.code?.trim().toUpperCase()).filter(Boolean));
+    let counter = 0;
+    const freeCode = (): string => {
+      counter += 1;
+      const code = `JC-${String(counter).padStart(3, '0')}`;
+      if (taken.has(code)) return freeCode();
+      taken.add(code);
+      return code;
+    };
     const milestones = params.milestones.map((item, index) => ({
+      code: item.code?.trim() ? entryCode(item.code, 'de jalon de la charte') : freeCode(),
       name: requiredText(item.name, `Le jalon n° ${index + 1} doit avoir un nom.`),
       targetDate: validDate(item.targetDate, `jalon n° ${index + 1}`),
     }));
+    assertUniqueCodes(milestones, 'de jalon de la charte');
     const authority = params.projectManager.authority;
 
     const charter: ProjectCharterProps = {

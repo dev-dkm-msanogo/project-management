@@ -61,6 +61,7 @@ export const saveScheduleModelBodySchema = z.object({
         type: z.enum(['MAJOR', 'PHASE_GATE']),
         targetDate: isoDate,
         achievedOn: isoDate.nullable().default(null),
+        charterCode: entryCode.nullable().default(null),
       }),
     )
     .max(100),

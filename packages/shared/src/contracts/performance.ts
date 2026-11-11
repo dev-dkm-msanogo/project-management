@@ -178,6 +178,8 @@ export interface PortfolioProjectDto {
   openRisks: number;
   criticalRisks: number;
   openIssues: number;
+  /** Jalons de la charte non atteints, en retard ou non planifiés dans le calendrier. */
+  charterMilestoneAlerts: number;
   nextMilestone: { name: string; date: string } | null;
 }
 

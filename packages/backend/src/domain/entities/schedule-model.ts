@@ -57,6 +57,8 @@ export interface ScheduleMilestone {
   type: MilestoneType;
   targetDate: Date;
   achievedOn: Date | null;
+  /** Jalon de la charte que ce jalon réalise (code) ; absent ou `null` : aucun. */
+  charterCode?: string | null;
 }
 
 export interface ProjectCalendar {
@@ -222,8 +224,13 @@ export class ScheduleModel {
         type: milestone.type,
         targetDate: new Date(milestone.targetDate),
         achievedOn: milestone.achievedOn ? new Date(milestone.achievedOn) : null,
+        charterCode: milestone.charterCode?.trim() ? entryCode(milestone.charterCode, 'de jalon de la charte') : null,
       };
     });
+    const realized = milestones.flatMap((milestone) => (milestone.charterCode ? [milestone.charterCode.toUpperCase()] : []));
+    if (new Set(realized).size !== realized.length) {
+      throw new DomainError('Deux jalons du calendrier réalisent le même jalon de la charte.');
+    }
 
     const weekdays = [...new Set(params.calendar.workingWeekdays)].sort();
     if (weekdays.some((day) => !Number.isInteger(day) || day < 1 || day > 7)) {

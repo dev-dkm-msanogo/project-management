@@ -1,3 +1,5 @@
+import { charterMilestoneStatuses } from '@domain/entities/charter-milestones';
+import type { ProjectCharter } from '@domain/entities/project-charter';
 import type { CostEstimates } from '@domain/entities/cost-estimates';
 import type { ProjectPlan } from '@domain/entities/project-plan';
 import type { ScheduleModel } from '@domain/entities/schedule-model';
@@ -102,17 +104,33 @@ export class PreviewScheduleService {
 }
 
 /** Modèle d'ordonnancement : chaque activité se rattache à un élément de la WBS de l'échéancier. */
-export function scheduleModelServices(plans: ProjectPlanRepository) {
+export function scheduleModelServices(plans: ProjectPlanRepository, charters: ProjectDocumentRepository<ProjectCharter>) {
   return {
     toDto: async (model: ScheduleModel): Promise<ScheduleModelDto> => {
-      const plan = await plans.findByProjectId(model.projectId);
+      const [plan, charter] = await Promise.all([
+        plans.findByProjectId(model.projectId),
+        charters.findByProjectId(model.projectId),
+      ]);
       const used = new Set(model.props.activities.map((activity) => activity.wbsCode));
       const names = (plan?.tasks ?? []).filter((task) => used.has(task.wbs.value)).map((task) => [task.wbs.value, task.name]);
-      return toScheduleModelDto(model, Object.fromEntries(names), scheduledWbs(plan, model));
+      return toScheduleModelDto(
+        model,
+        Object.fromEntries(names),
+        scheduledWbs(plan, model),
+        charterMilestoneStatuses(charter?.props.milestones ?? [], model.props.milestones),
+      );
     },
     beforeSave: async (model: ScheduleModel): Promise<void> => {
       const names = await wbsNamesOf(plans, model.projectId);
       assertKnownWbs(model.props.activities.map((activity) => activity.wbsCode), names, 'Activités');
+      const charter = await charters.findByProjectId(model.projectId);
+      const known = new Set((charter?.props.milestones ?? []).map((item) => item.code.toUpperCase()));
+      const unknown = model.props.milestones
+        .map((milestone) => milestone.charterCode)
+        .filter((code): code is string => code !== null && code !== undefined && !known.has(code.toUpperCase()));
+      if (unknown.length > 0) {
+        throw new DomainError(`Jalon(s) absent(s) de la charte : ${[...new Set(unknown)].join(', ')}.`);
+      }
     },
   };
 }

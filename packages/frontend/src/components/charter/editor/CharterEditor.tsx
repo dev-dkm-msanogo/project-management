@@ -177,7 +177,7 @@ export function CharterEditor({ mode, projectId, initialInput, onCancel, onSaved
           onChange={(milestones) => patch({ milestones })}
           addLabel="Ajouter un jalon"
           emptyLabel="Aucun jalon."
-          makeEmpty={() => ({ name: '', targetDate: '' })}
+          makeEmpty={() => ({ code: '', name: '', targetDate: '' })}
           renderItem={(item, update) => (
             <div className="editor-grid editor-grid--wide-narrow">
               <Field label="Jalon">

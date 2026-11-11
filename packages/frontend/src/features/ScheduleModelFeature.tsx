@@ -78,7 +78,7 @@ export function ScheduleModelFeature({ projectId, page, onNavigate }: ScheduleMo
         segment: 'schedule-model',
         component: true,
         // Plan approuvé : les dates d'atteinte des jalons restent à saisir.
-        trackedWhenLocked: page === 'milestones' ? 'Saisir les jalons atteints' : undefined,
+        trackedWhenLocked: page === 'milestones' ? 'Saisir les jalons atteints et leurs liens' : undefined,
       }}
       deletion={{
         title: "Supprimer le modèle d'ordonnancement ?",

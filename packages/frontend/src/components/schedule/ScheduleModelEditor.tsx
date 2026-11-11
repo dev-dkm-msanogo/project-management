@@ -19,7 +19,8 @@ import { CheckboxInput, DateInput, NumberInput, SelectInput, TextArea, TextInput
 import { PersonSelect } from '@/components/people/People';
 import { useProjectPlan } from '@/hooks/useProjectPlan';
 import { nextCode } from '@/lib/codes';
-import { todayIso } from '@/lib/format';
+import { useProjectCharter } from '@/hooks/useProjectDocuments';
+import { formatShortDate, todayIso } from '@/lib/format';
 import {
   blankActivity,
   blankBasis,
@@ -66,7 +67,7 @@ export function ScheduleModelEditor({ projectId, section, initialInput, onCancel
   return (
     <EditorShell title={TITLES[section]} save={() => scheduleModelApi.save(projectId, input)} onCancel={onCancel} onSaved={onSaved}>
       {section === 'activities' && <ActivitiesSection projectId={projectId} input={input} patch={patch} />}
-      {section === 'milestones' && <MilestonesSection input={input} patch={patch} />}
+      {section === 'milestones' && <MilestonesSection projectId={projectId} input={input} patch={patch} />}
       {section === 'baseline' && <BaselineSection input={input} patch={patch} />}
     </EditorShell>
   );
@@ -311,8 +312,18 @@ function BasisFields({ basis, onChange }: { basis: DurationBasisInput; onChange:
   }
 }
 
-function MilestonesSection({ input, patch }: SectionProps) {
+function MilestonesSection({ projectId, input, patch }: SectionProps & { projectId: string }) {
   const { calendar } = input;
+  const { data: charter } = useProjectCharter(projectId);
+  // Un jalon de la charte n'est réalisé que par un seul jalon du calendrier.
+  const realizedElsewhere = (own: string | null) =>
+    new Set(input.milestones.map((milestone) => milestone.charterCode).filter((code): code is string => code !== null && code !== own));
+  const charterOptions = (own: string | null) => [
+    { value: '', label: 'Aucun' },
+    ...(charter?.milestones ?? [])
+      .filter((item) => !realizedElsewhere(own).has(item.code))
+      .map((item) => ({ value: item.code, label: `${item.code} · ${item.name} (${formatShortDate(item.targetDate)})` })),
+  ];
   const setCalendar = (changes: Partial<ScheduleModelInput['calendar']>) => patch({ calendar: { ...calendar, ...changes } });
 
   return (
@@ -324,7 +335,7 @@ function MilestonesSection({ input, patch }: SectionProps) {
           onChange={(milestones) => patch({ milestones })}
           addLabel="Ajouter un jalon"
           emptyLabel="Aucun jalon."
-          makeEmpty={() => ({ code: nextCode(input.milestones, 'J'), name: '', description: '', type: 'MAJOR', targetDate: todayIso(), achievedOn: null })}
+          makeEmpty={() => ({ code: nextCode(input.milestones, 'J'), name: '', description: '', type: 'MAJOR', targetDate: todayIso(), achievedOn: null, charterCode: null })}
           renderItem={(milestone, update) => (
             <div className="entry-form">
               <section className="entry-form__step">
@@ -341,6 +352,13 @@ function MilestonesSection({ input, patch }: SectionProps) {
                 </div>
                 <Field label="Atteint le" hint="À renseigner quand le jalon est atteint : le rapport exécutif le reprend.">
                   <DateInput value={milestone.achievedOn} onChange={(achievedOn) => update({ achievedOn })} />
+                </Field>
+                <Field label="Jalon de la charte réalisé" hint="Le jalon approuvé à la charte que celui-ci réalise : la page affiche l'écart de dates.">
+                  <SelectInput
+                    value={milestone.charterCode ?? ''}
+                    onChange={(code) => update({ charterCode: code || null })}
+                    options={charterOptions(milestone.charterCode)}
+                  />
                 </Field>
                 <Field label="Jalon">
                   <TextInput value={milestone.name} onChange={(name) => update({ name })} required />
